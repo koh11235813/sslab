@@ -1,0 +1,4 @@
+[console_scripts]
+semantic-run-fed-client = run_fed_client:main
+semantic-run-fed-server = run_fed_server:main
+semantic-run-single = run_single:main

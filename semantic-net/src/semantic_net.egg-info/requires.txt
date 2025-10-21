@@ -1,0 +1,7 @@
+torch>=2.1
+numpy<2.0,>=1.24
+pyyaml>=6.0
+flwr>=1.7
+
+[dev]
+pytest>=7.4
