@@ -1,0 +1,8 @@
+*.*~
+.env
+.DS_Store
+*.un~
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+
