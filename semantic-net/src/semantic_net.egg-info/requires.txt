@@ -1,7 +1,14 @@
-torch>=2.1
+torch<2.6,>=2.1
+torchvision<0.21,>=0.16
 numpy<2.0,>=1.24
 pyyaml>=6.0
 flwr>=1.7
 
 [dev]
 pytest>=7.4
+
+[jetson]
+
+[jetson:platform_system == "Linux" and platform_machine == "aarch64"]
+torch@ https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl
+torchvision@ ./wheels/torchvision-0.20.0a0+afc54f7-cp310-cp310-linux_aarch64.whl

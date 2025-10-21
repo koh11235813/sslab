@@ -23,6 +23,12 @@ Federated learning on bandwidth-constrained edge devices benefits from exchangin
 
    This resolves the environment described in `pyproject.toml` into `.venv/`.
 
+   For Jetson or other NVIDIA L4T systems, include the Jetson-specific wheels packaged with this repository:
+
+   ```bash
+   uv sync --extra jetson
+   ```
+
 2. **Use the environment**
 
    - Run scripts without manual activation:
@@ -56,13 +62,13 @@ The provided `Dockerfile` targets NVIDIA Jetson devices by starting from `nvcr.i
    docker build -t semantic-net:jp36 .
    ```
 
+   > Note: To target a different JetPack release, update the `jetson` extra in `pyproject.toml`, add the matching torchvision wheel under `wheels/`, and regenerate `uv.lock` before rebuilding.
+
    Supply new wheel versions if NVIDIA publishes an update:
 
    ```bash
-   docker build \
-     --build-arg TORCH_WHEEL_URL=https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl \
-     --build-arg TORCHVISION_WHEEL=torchvision-0.20.0a0+afc54f7-cp310-cp310-linux_aarch64.whl \
-     -t semantic-net:jp36 .
+   uv lock  # regenerate the lock file after updating pyproject/wheels
+   docker build -t semantic-net:jp36 .
    ```
 
 2. **Run**
@@ -72,6 +78,25 @@ The provided `Dockerfile` targets NVIDIA Jetson devices by starting from `nvcr.i
    ```
 
    The container drops you into `/workspace/semantic-net` with a virtual environment already on `PATH`. Use the installed console scripts (`semantic-run-single`, `semantic-run-fed-client`, `semantic-run-fed-server`) directly.
+
+## Docker Compose
+
+The repository also ships with a convenience `docker-compose.yml` that wraps the same image for interactive shells, Flower servers, and clients.
+
+- Launch an interactive shell in the container (Jetson host) while keeping code mounted from the host machine:
+
+  ```bash
+  docker compose --profile cli run --rm shell
+  ```
+
+- Bring up a Flower server and client pair (scale clients as needed):
+
+  ```bash
+  docker compose --profile gpu up --build server
+  docker compose --profile gpu up --build --scale client=2 client
+  ```
+
+  Tune runtime parameters with environment variables, e.g. `SERVER_ROUNDS=5 CLIENT_CONFIG=configs/task_netqos.yaml docker compose --profile gpu up client`.
 
 ## Usage Examples
 

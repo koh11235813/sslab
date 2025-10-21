@@ -1,0 +1,56 @@
+version: "3.9"
+
+x-semantic-net-env: &semantic-net-env
+  NVIDIA_VISIBLE_DEVICES: all
+  NVIDIA_DRIVER_CAPABILITIES: compute,utility
+
+x-semantic-net-service: &semantic-net-service
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: semantic-net:jp36
+  working_dir: /workspace/semantic-net
+  volumes:
+    - .:/workspace/semantic-net
+  environment: *semantic-net-env
+  device_requests:
+    - driver: nvidia
+      count: all
+      capabilities: ["gpu"]
+  init: true
+
+services:
+  shell:
+    <<: *semantic-net-service
+    command: ["bash"]
+    stdin_open: true
+    tty: true
+    profiles: ["cli"]
+
+  server:
+    <<: *semantic-net-service
+    command:
+      [
+        "semantic-run-fed-server",
+        "--port",
+        "${SERVER_PORT:-8080}",
+        "--rounds",
+        "${SERVER_ROUNDS:-3}",
+      ]
+    ports:
+      - "${SERVER_PORT:-8080}:${SERVER_PORT:-8080}"
+    profiles: ["gpu"]
+
+  client:
+    <<: *semantic-net-service
+    depends_on:
+      - server
+    command:
+      [
+        "semantic-run-fed-client",
+        "--config",
+        "${CLIENT_CONFIG:-configs/task_disaster.yaml}",
+        "--server",
+        "server:${SERVER_PORT:-8080}",
+      ]
+    profiles: ["gpu"]
