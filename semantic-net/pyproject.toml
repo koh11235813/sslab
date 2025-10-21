@@ -1,0 +1,33 @@
+[project]
+name = "semantic-net"
+version = "0.1.0"
+description = "Federated semantic communication experiments for Jetson-class devices."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Kohsuke Yamakawa" }]
+dependencies = [
+    "torch>=2.1",
+    "numpy>=1.24",
+    "pyyaml>=6.0",
+    "flwr>=1.7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+]
+
+[project.scripts]
+semantic-run-single = "run_single:main"
+semantic-run-fed-client = "run_fed_client:main"
+semantic-run-fed-server = "run_fed_server:main"
+
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.4",
+]

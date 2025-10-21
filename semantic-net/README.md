@@ -1,18 +1,98 @@
 # Semantic Network Project
 
-This repository contains a modular framework for federated learning on NVIDIA Jetson devices with a focus on semantic communication.  It allows you to train lightweight models on edge devices, compress model updates or features into semantic codes, and coordinate training across a fleet of devices using Federated Averaging.  The project structure is designed to make it easy to swap out tasks (e.g. image segmentation or time‑series prediction) and adjust compression strategies based on network conditions.
+Federated learning on bandwidth-constrained edge devices benefits from exchanging compact, task-aware representations instead of raw gradients. This repository provides a lightweight playground for those ideas: it couples task-specific PyTorch models with semantic compression utilities and minimal [Flower](https://flower.dev/) client/server wrappers so you can experiment on NVIDIA Jetson-class hardware or any CUDA-capable machine.
 
-## Project Structure
+## Repository Tour
 
-- **configs/** – YAML configuration files for different tasks and compression modes.
-- **task/** – Implementations of task‑specific models, data preprocessing, and metrics.  Currently two example tasks are provided:
-  - `disaster/` – simple image segmentation for disaster scene analysis.
-  - `netqos/` – time series prediction for network quality of service (QoS) estimation.
-- **semantic/** – Modules for semantic encoding/decoding and rate control of transmitted codes.
-- **federated/** – Client and server implementations for the Federated Learning loop (uses [Flower](https://flower.dev/) under the hood).
-- **transport/** – Prototypes for an ad‑hoc transport layer and message definitions.
-- **run_single.py** – Script to train a task locally on a single Jetson device.
-- **run_fed_client.py** – Run a federated learning client that trains locally and communicates updates to a server.
-- **run_fed_server.py** – Launch a simple federated learning server that aggregates client updates.
+- `configs/` – YAML presets for single-device and federated runs; start from `base.yaml` when cloning settings.
+- `federated/` – Thin Flower wrappers that expose a NumPy client and FedAvg server tuned for this project.
+- `semantic/` – Encoders, decoders, and rate control helpers implementing sparsification and quantization flows.
+- `task/` – Self-contained tasks (models, preprocessing, metrics); `disaster/` covers segmentation, `netqos/` covers time-series forecasting.
+- `transport/` – Experimental messaging scaffolding for future custom transports.
+- `run_single.py` / `run_fed_client.py` / `run_fed_server.py` – Entry points that wire configs, tasks, and semantic compression together.
 
-To get started, install the Python dependencies and run one of the scripts with the desired configuration file.  See the docstrings in each module for more details.
+## Getting Started with `uv`
+
+[`uv`](https://github.com/astral-sh/uv) manages dependencies and virtual environments for this project. The steps below create an isolated environment, install everything declared in `pyproject.toml`, and keep lock-step with the repo.
+
+1. **Sync dependencies**
+
+   ```bash
+   uv sync
+   ```
+
+   This resolves the environment described in `pyproject.toml` into `.venv/`.
+
+2. **Use the environment**
+
+   - Run scripts without manual activation:
+
+     ```bash
+     uv run python run_single.py --task disaster --epochs 1
+     ```
+
+   - Or activate the environment once per shell:
+
+     ```bash
+     source .venv/bin/activate
+     ```
+
+3. **Update dependencies**
+
+   ```bash
+   uv add <package>
+   uv remove <package>
+   ```
+
+   Re-run `uv sync` when the dependency list changes.
+
+## Usage Examples
+
+### Single-device experiments
+
+Run a quick smoke test of the segmentation task:
+
+```bash
+uv run python run_single.py --task disaster --epochs 1
+```
+
+Switch to the QoS forecasting task and override batch size and learning rate:
+
+```bash
+uv run python run_single.py --task netqos --epochs 3 --batch_size 32 --lr 5e-4
+```
+
+### Federated simulations
+
+1. Start the server (terminal 1):
+
+   ```bash
+   uv run python run_fed_server.py --port 8080 --rounds 3
+   ```
+
+2. Launch a client (terminal 2):
+
+   ```bash
+   uv run python run_fed_client.py \
+       --config configs/task_disaster.yaml \
+       --server localhost:8080
+   ```
+
+   Modify `configs/task_disaster.yaml` or `configs/task_netqos.yaml` to change semantic compression modes, optimizer settings, or dataset sizes.
+
+### Explore semantic compression
+
+- Tweak `semantic.encoder` to prototype new quantizers or sparsification schemes.
+- Adapt `semantic/rate_controller.py` if you want to enforce bitrate schedules across rounds.
+- Use `transport/` as a sandbox for non-Flower communication backends or custom message formats.
+
+## Development Workflow
+
+- Use `uv run pytest` to execute tests once you add them under `tests/`.
+- Pin reproducibility seeds inside task modules; these synthetic datasets use deterministic seeds when provided.
+- When adding a new task, mirror the layout under `task/` (preprocess, model, metrics) and extend `task/__init__.py` so the loaders can discover it.
+- Commit related configuration tweaks alongside code changes and document runnable presets in this file or the config comments.
+
+## License
+
+MIT License – see `../LICENSE` for details.
