@@ -46,6 +46,33 @@ Federated learning on bandwidth-constrained edge devices benefits from exchangin
 
    Re-run `uv sync` when the dependency list changes.
 
+## Docker Image (JetPack)
+
+The provided `Dockerfile` targets NVIDIA Jetson devices by starting from `nvcr.io/nvidia/l4t-base:r36.4.0`. It installs the custom PyTorch 2.5 wheel published by NVIDIA and pairs it with the matching torchvision wheel stored under `wheels/`.
+
+1. **Build**
+
+   ```bash
+   docker build -t semantic-net:jp36 .
+   ```
+
+   Supply new wheel versions if NVIDIA publishes an update:
+
+   ```bash
+   docker build \
+     --build-arg TORCH_WHEEL_URL=https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl \
+     --build-arg TORCHVISION_WHEEL=torchvision-0.20.0a0+afc54f7-cp310-cp310-linux_aarch64.whl \
+     -t semantic-net:jp36 .
+   ```
+
+2. **Run**
+
+   ```bash
+   docker run --rm -it --runtime nvidia --network host semantic-net:jp36 bash
+   ```
+
+   The container drops you into `/workspace/semantic-net` with a virtual environment already on `PATH`. Use the installed console scripts (`semantic-run-single`, `semantic-run-fed-client`, `semantic-run-fed-server`) directly.
+
 ## Usage Examples
 
 ### Single-device experiments
