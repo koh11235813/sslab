@@ -1,0 +1,16 @@
+---
+# Configuration for the disaster scene analysis task
+
+inherits: base.yaml
+
+task:
+  name: disaster
+  input_size: [3, 256, 256]    # RGB images resized to 256x256
+  num_classes: 2               # binary segmentation (e.g. debris vs background)
+
+model:
+  backbone: simple_segnet      # defined in task/disaster/model.py
+
+semantic:
+  mode: features
+  bitwidth: 8

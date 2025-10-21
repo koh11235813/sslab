@@ -1,0 +1,22 @@
+---
+# Base configuration for semantic network training and federated learning
+#
+# This file defines sensible defaults that apply across tasks.  Specific
+# configurations for each task can override these values by extending
+# this configuration.
+
+device: cpu                 # running device (cpu, cuda)
+lr: 0.001                   # learning rate for optimisers
+local_epochs: 1             # number of local training epochs per round
+
+task:
+  name: disaster            # default task (disaster, netqos)
+
+semantic:
+  mode: features            # options: features, gradients
+  bitwidth: 8               # bits used when quantising features
+  topk: 0.1                 # sparsity ratio for gradients when mode=gradients
+
+network:
+  max_rate_bps: 1e6         # nominal maximum network bitrate (bits per second)
+  rate_adaptation: true     # enable dynamic rate control

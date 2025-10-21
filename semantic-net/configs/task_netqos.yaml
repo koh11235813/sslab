@@ -1,0 +1,17 @@
+---
+# Configuration for the network QoS prediction task
+
+inherits: base.yaml
+
+task:
+  name: netqos
+  input_length: 20            # number of timesteps in the input sequence
+  horizon: 1                  # prediction horizon (next timestep)
+
+model:
+  backbone: simple_rnn        # defined in task/netqos/model.py
+  hidden_size: 32             # hidden dimension for the RNN
+
+semantic:
+  mode: gradients
+  topk: 0.05                  # transmit top 5% of gradient entries per round
