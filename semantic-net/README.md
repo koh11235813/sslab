@@ -140,6 +140,16 @@ uv run python src/run_single.py --task disaster --epochs 1 --save-model --output
 
    Modify `configs/task_disaster.yaml` or `configs/task_netqos.yaml` to change semantic compression modes, optimizer settings, or dataset sizes.
 
+### Peer-to-peer federated training
+
+Use the new peer runner when you want Jetson devices to collaborate without a central server. Each device listens on its configured `p2p.local_port`, trains locally, and exchanges model updates over UDP with its peers listed on the command line. Make sure every node lists the other participants (but not itself) and that firewalls permit the chosen port.
+
+```bash
+python run_peer_training.py --config configs/task_disaster.yaml --peers 192.168.0.2:5000,192.168.0.3:5000
+```
+
+Adjust defaults such as `p2p.local_port` or `p2p.listen_timeout` in `configs/base.yaml`, or override them per-node with `--port` and `--rounds`.
+
 ### Explore semantic compression
 
 - Tweak `semantic.encoder` to prototype new quantizers or sparsification schemes.
