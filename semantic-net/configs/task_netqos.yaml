@@ -15,3 +15,8 @@ model:
 semantic:
   mode: gradients
   topk: 0.05                  # transmit top 5% of gradient entries per round
+
+training:
+  batch_size: 16
+  lr: 0.001
+  local_epochs: 1
