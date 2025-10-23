@@ -14,3 +14,8 @@ model:
 semantic:
   mode: features
   bitwidth: 8
+
+training:
+  batch_size: 8
+  lr: 0.001
+  local_epochs: 1

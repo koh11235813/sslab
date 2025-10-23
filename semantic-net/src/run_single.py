@@ -18,6 +18,7 @@ Example:
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 from typing import Dict, Any
 
 import torch
@@ -81,6 +82,17 @@ def main() -> None:
     parser.add_argument("--batch_size", type=int, default=None, help="Batch size for training (overrides config).")
     parser.add_argument("--lr", type=float, default=None, help="Learning rate (overrides config).")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu", help="Computation device.")
+    parser.add_argument(
+        "--save-model",
+        action="store_true",
+        help="Persist the trained model weights to disk once training completes.",
+    )
+    parser.add_argument(
+        "--output-path",
+        type=str,
+        default="model.pth",
+        help="Destination path for the saved weights (requires .pt or .pth extension).",
+    )
     args = parser.parse_args()
 
     # Build a configuration dictionary.  In a real application you might
@@ -112,6 +124,14 @@ def main() -> None:
         train_loss = train_one_epoch(model, loaders, loss_fn, optimizer, device, cfg)
         val_loss = validate(model, loaders, loss_fn, device, cfg)
         print(f"Epoch {epoch+1}/{args.epochs}: train_loss={train_loss:.4f}, val_loss={val_loss:.4f}")
+
+    if args.save_model:
+        output_path = Path(args.output_path).expanduser().resolve()
+        if output_path.suffix not in {".pt", ".pth"}:
+            raise ValueError("Output path must end with .pt or .pth")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        torch.save(model.state_dict(), output_path)
+        print(f"Saved model weights to {output_path}")
 
 
 if __name__ == "__main__":
