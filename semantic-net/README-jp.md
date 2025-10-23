@@ -2,14 +2,16 @@
 
 帯域幅が限られたエッジデバイスでは、生の勾配ではなくタスク指向の圧縮表現を交換することでフェデレーテッドラーニングの通信量を抑えられます。このリポジトリは、そのようなアイデアを検証するための軽量な遊び場を提供します。PyTorch で記述したタスク固有モデルとセマンティック圧縮ユーティリティ、そして最小限の [Flower](https://flower.dev/) クライアント／サーバーを組み合わせ、NVIDIA Jetson をはじめとする CUDA 対応マシンで実験できます。
 
+英語版のガイドは [README.md](README.md) を参照してください。
+
 ## リポジトリ構成
 
 - `configs/` – 単体実験やフェデレーテッド実行用の YAML プリセット。新しい設定は `base.yaml` から派生させます。
-- `federated/` – このプロジェクト向けに調整した Flower の NumPy クライアントと FedAvg サーバーの薄いラッパー。
-- `semantic/` – スパース化や量子化フローを実装したエンコーダ／デコーダ、レート制御ヘルパー。
-- `task/` – タスク固有のモデル、前処理、メトリクス。`disaster/` はセグメンテーション、`netqos/` は時系列予測をカバーします。
-- `transport/` – 将来のカスタムトランスポートを想定した実験的メッセージング枠組み。
-- `run_single.py` / `run_fed_client.py` / `run_fed_server.py` – コンフィグ、タスク、セマンティック圧縮を結線するエントリースクリプト。
+- `src/federated/` – このプロジェクト向けに調整した Flower の NumPy クライアントと FedAvg サーバーの薄いラッパー。
+- `src/semantic/` – スパース化や量子化フローを実装したエンコーダ／デコーダ、レート制御ヘルパー。
+- `src/task/` – タスク固有のモデル、前処理、メトリクス。`disaster/` はセグメンテーション、`netqos/` は時系列予測をカバーします。
+- `src/transport/` – 将来のカスタムトランスポートを想定した実験的メッセージング枠組み。
+- `src/run_single.py` / `src/run_fed_client.py` / `src/run_fed_server.py` – コンフィグ、タスク、セマンティック圧縮を結線するエントリースクリプト。
 
 ## `uv` を使ったセットアップ
 
@@ -32,7 +34,7 @@
    - 仮想環境を明示的にアクティブ化せずスクリプトを実行:
 
      ```bash
-     uv run python run_single.py --task disaster --epochs 1
+     uv run python src/run_single.py --task disaster --epochs 1
      ```
 
    - もしくは一度だけ環境をアクティブ化:
@@ -103,13 +105,19 @@
 セグメンテーションタスクのスモークテスト:
 
 ```bash
-uv run python run_single.py --task disaster --epochs 1
+uv run python src/run_single.py --task disaster --epochs 1
 ```
 
 QoS 予測タスクに切り替え、バッチサイズと学習率を上書き:
 
 ```bash
-uv run python run_single.py --task netqos --epochs 3 --batch_size 32 --lr 5e-4
+uv run python src/run_single.py --task netqos --epochs 3 --batch_size 32 --lr 5e-4
+```
+
+トレーニング完了後に学習済み重みを保存したい場合は、保存フラグを指定します（拡張子は `.pt` もしくは `.pth` を使用してください）。
+
+```bash
+uv run python src/run_single.py --task disaster --epochs 1 --save-model --output-path checkpoints/disaster.pth
 ```
 
 ### フェデレーテッドシミュレーション
@@ -117,13 +125,13 @@ uv run python run_single.py --task netqos --epochs 3 --batch_size 32 --lr 5e-4
 1. サーバーを起動 (ターミナル 1):
 
    ```bash
-   uv run python run_fed_server.py --port 8080 --rounds 3
+   uv run python src/run_fed_server.py --port 8080 --rounds 3
    ```
 
 2. クライアントを起動 (ターミナル 2):
 
    ```bash
-   uv run python run_fed_client.py \
+   uv run python src/run_fed_client.py \
        --config configs/task_disaster.yaml \
        --server localhost:8080
    ```

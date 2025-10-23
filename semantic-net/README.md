@@ -2,6 +2,8 @@
 
 Federated learning on bandwidth-constrained edge devices benefits from exchanging compact, task-aware representations instead of raw gradients. This repository provides a lightweight playground for those ideas: it couples task-specific PyTorch models with semantic compression utilities and minimal [Flower](https://flower.dev/) client/server wrappers so you can experiment on NVIDIA Jetson-class hardware or any CUDA-capable machine.
 
+For a Japanese translation of this guide, see [README-jp.md](README-jp.md).
+
 ## Repository Tour
 
 - `configs/` – YAML presets for single-device and federated runs; start from `base.yaml` when cloning settings.
@@ -10,7 +12,6 @@ Federated learning on bandwidth-constrained edge devices benefits from exchangin
 - `src/task/` – Self-contained tasks (models, preprocessing, metrics); `disaster/` covers segmentation, `netqos/` covers time-series forecasting.
 - `src/transport/` – Experimental messaging scaffolding for future custom transports.
 - `src/run_single.py` / `src/run_fed_client.py` / `src/run_fed_server.py` – Entry points that wire configs, tasks, and semantic compression together.
-- `.env` - File to load environment variables required for uv. Due to the specific version of torch, `UV_SKIP_WHEEL_FILENAME_CHECK=1` is set.
 
 ## Getting Started with `uv`
 
@@ -115,12 +116,18 @@ Switch to the QoS forecasting task and override batch size and learning rate:
 uv run python src/run_single.py --task netqos --epochs 3 --batch_size 32 --lr 5e-4
 ```
 
+Persist trained weights after the loop finishes by adding the save flag (use `.pt` or `.pth`):
+
+```bash
+uv run python src/run_single.py --task disaster --epochs 1 --save-model --output-path checkpoints/disaster.pth
+```
+
 ### Federated simulations
 
 1. Start the server (terminal 1):
 
    ```bash
-   uv run python run_fed_server.py --port 8080 --rounds 3
+   uv run python src/run_fed_server.py --port 8080 --rounds 3
    ```
 
 2. Launch a client (terminal 2):
