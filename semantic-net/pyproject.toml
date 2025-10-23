@@ -39,8 +39,8 @@ semantic-run-fed-server = "run_fed_server:main"
 requires = ["setuptools>=65", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "pytest>=7.4",
 ]
 
