@@ -1,0 +1,78 @@
+[project]
+name = "semantic-net-manylinux"
+version = "0.1.0"
+description = "Federated semantic communication experiments (x86_64: CPU / CUDA 12.8 / ROCm)."
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = "MIT"
+authors = [{ name = "Kohsuke Yamakawa" }]
+dependencies = [
+  "numpy>=1.24,<2.0",
+  "pyyaml>=6.0",
+  "flwr>=1.7",
+  # Torch-family dependencies are chosen via extras
+]
+
+[project.optional-dependencies]
+cpu = [
+  "torch>=2.5,<2.6 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+  "torchvision>=0.20,<0.21 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+]
+cu128 = [
+  "torch>=2.5,<2.6 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+  "torchvision>=0.20,<0.21 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+]
+rocm = [
+  "torch>=2.5,<2.6 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+  "torchvision>=0.20,<0.21 ; platform_system == 'Linux' and platform_machine == 'x86_64'",
+]
+
+[tool.uv]
+conflicts = [
+  [{ extra = "cpu" },   { extra = "cu128" }],
+  [{ extra = "cpu" },   { extra = "rocm"  }],
+  [{ extra = "cu128" }, { extra = "rocm  "}],
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu",   extra = "cpu"   },
+  { index = "pytorch-cu128", extra = "cu128" },
+  { index = "pytorch-rocm",  extra = "rocm"  },
+]
+torchvision = [
+  { index = "pytorch-cpu",   extra = "cpu"   },
+  { index = "pytorch-cu128", extra = "cu128" },
+  { index = "pytorch-rocm",  extra = "rocm"  },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-rocm"
+url = "https://download.pytorch.org/whl/rocm6.4"
+explicit = true
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["run_single", "run_fed_client", "run_fed_server"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+semantic-run-single = "run_single:main"
+semantic-run-fed-client = "run_fed_client:main"
+semantic-run-fed-server = "run_fed_server:main"
+
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
