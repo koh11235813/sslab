@@ -17,10 +17,16 @@ semantic:
   bitwidth: 8               # bits used when quantising features
   topk: 0.1                 # sparsity ratio for gradients when mode=gradients
 
+training:
+  batch_size: 8             # default mini-batch size used by task loaders
+  lr: 0.001                 # optimiser learning rate
+  local_epochs: 1           # local epochs per communication round
+  val_split: 0.2            # fraction of samples reserved for validation
+
 network:
   max_rate_bps: 1e6         # nominal maximum network bitrate (bits per second)
   rate_adaptation: true     # enable dynamic rate control
-
+  
 p2p:
   local_port: 5000          # UDP port used for peer-to-peer exchange
   listen_timeout: 1.0       # socket timeout in seconds while waiting for peers

@@ -2,14 +2,16 @@
 
 Federated learning on bandwidth-constrained edge devices benefits from exchanging compact, task-aware representations instead of raw gradients. This repository provides a lightweight playground for those ideas: it couples task-specific PyTorch models with semantic compression utilities and minimal [Flower](https://flower.dev/) client/server wrappers so you can experiment on NVIDIA Jetson-class hardware or any CUDA-capable machine.
 
+For a Japanese translation of this guide, see [README-jp.md](README-jp.md).
+
 ## Repository Tour
 
 - `configs/` – YAML presets for single-device and federated runs; start from `base.yaml` when cloning settings.
-- `federated/` – Thin Flower wrappers that expose a NumPy client and FedAvg server tuned for this project.
-- `semantic/` – Encoders, decoders, and rate control helpers implementing sparsification and quantization flows.
-- `task/` – Self-contained tasks (models, preprocessing, metrics); `disaster/` covers segmentation, `netqos/` covers time-series forecasting.
-- `transport/` – Experimental messaging scaffolding for future custom transports.
-- `run_single.py` / `run_fed_client.py` / `run_fed_server.py` – Entry points that wire configs, tasks, and semantic compression together.
+- `src/federated/` – Thin Flower wrappers that expose a NumPy client and FedAvg server tuned for this project.
+- `src/semantic/` – Encoders, decoders, and rate control helpers implementing sparsification and quantization flows.
+- `src/task/` – Self-contained tasks (models, preprocessing, metrics); `disaster/` covers segmentation, `netqos/` covers time-series forecasting.
+- `src/transport/` – Experimental messaging scaffolding for future custom transports.
+- `src/run_single.py` / `src/run_fed_client.py` / `src/run_fed_server.py` – Entry points that wire configs, tasks, and semantic compression together.
 
 ## Getting Started with `uv`
 
@@ -34,7 +36,7 @@ Federated learning on bandwidth-constrained edge devices benefits from exchangin
    - Run scripts without manual activation:
 
      ```bash
-     uv run python run_single.py --task disaster --epochs 1
+     uv run python src/run_single.py --task disaster --epochs 1
      ```
 
    - Or activate the environment once per shell:
@@ -105,13 +107,19 @@ The repository also ships with a convenience `docker-compose.yml` that wraps the
 Run a quick smoke test of the segmentation task:
 
 ```bash
-uv run python run_single.py --task disaster --epochs 1
+uv run python src/run_single.py --task disaster --epochs 1
 ```
 
 Switch to the QoS forecasting task and override batch size and learning rate:
 
 ```bash
-uv run python run_single.py --task netqos --epochs 3 --batch_size 32 --lr 5e-4
+uv run python src/run_single.py --task netqos --epochs 3 --batch_size 32 --lr 5e-4
+```
+
+Persist trained weights after the loop finishes by adding the save flag (use `.pt` or `.pth`):
+
+```bash
+uv run python src/run_single.py --task disaster --epochs 1 --save-model --output-path checkpoints/disaster.pth
 ```
 
 ### Federated simulations
@@ -119,13 +127,13 @@ uv run python run_single.py --task netqos --epochs 3 --batch_size 32 --lr 5e-4
 1. Start the server (terminal 1):
 
    ```bash
-   uv run python run_fed_server.py --port 8080 --rounds 3
+   uv run python src/run_fed_server.py --port 8080 --rounds 3
    ```
 
 2. Launch a client (terminal 2):
 
    ```bash
-   uv run python run_fed_client.py \
+   uv run python src/run_fed_client.py \
        --config configs/task_disaster.yaml \
        --server localhost:8080
    ```
