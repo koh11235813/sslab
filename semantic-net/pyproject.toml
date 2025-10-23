@@ -7,8 +7,8 @@ requires-python = ">=3.9"
 license = "MIT"
 authors = [{ name = "Kohsuke Yamakawa" }]
 dependencies = [
-    "torch>=2.1,<2.6",
-    "torchvision>=0.16,<0.21",
+    "torch==2.5",
+    "torchvision==0.20.0",
     "numpy>=1.24,<2.0",
     "pyyaml>=6.0",
     "flwr>=1.7",
@@ -18,10 +18,10 @@ dependencies = [
 dev = [
     "pytest>=7.4",
 ]
-jetson = [
-    "torch @ https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
-    "torchvision @ ./wheels/torchvision-0.20.0a0+afc54f7-cp310-cp310-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
-]
+# jetson = [
+#     "torch @ https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
+#     "torchvision @ ./wheels/torchvision-0.20.0a0+afc54f7-cp310-cp310-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
+# ]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -42,4 +42,12 @@ build-backend = "setuptools.build_meta"
 [tool.uv]
 dev-dependencies = [
     "pytest>=7.4",
+]
+
+[tool.uv.source]
+torch = [
+  { url = "https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl", marker = "platform_system == 'Linux' and platform_machine == 'aarch64' and extra == 'jetson'" }
+]
+torchvision = [
+  { path = "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/wheels/torchvision-0.20.0a0+afc54f7-cp310-cp310-linux_aarch64.whl", marker = "platform_system == 'Linux' and platform_machine == 'aarch64' and extra == 'jetson' " }
 ]
