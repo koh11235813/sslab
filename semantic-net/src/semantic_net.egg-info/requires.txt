@@ -11,4 +11,4 @@ pytest>=7.4
 
 [jetson:platform_system == "Linux" and platform_machine == "aarch64"]
 torch@ https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl
-torchvision@ file:///home/yamakawa-kohsuke/development/github/sslab/semantic-net/wheels/torchvision-0.20.0a0+afc54f7-cp310-cp310-linux_aarch64.whl
+torchvision@ https://kinoko1943.org/files/torchvision-0.20.0a0+afc54f7-cp310-cp310-linux_aarch64.whl
