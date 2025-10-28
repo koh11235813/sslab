@@ -5,7 +5,7 @@ description = "Federated semantic communication experiments (x86_64: CPU / CUDA 
 readme = "README.md"
 # requires-python = ">=3.10,<3.13"
 requires-python = ">=3.10,<3.12"
-license = "MIT"
+license = { text = "MIT" }
 authors = [{ name = "koh1123813" }]
 dependencies = [
   "numpy>=1.24,<2.0",
@@ -19,6 +19,28 @@ name = "pytorch-cpu"
 url = "https://download.pytorch.org/whl/cpu"
 explicit = true
 
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-rocm"
+url = "https://download.pytorch.org/whl/rocm6.4"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", marker = "extra == 'cpu'" },
+  { index = "pytorch-cu128", marker = "extra != 'cpu' and extra == 'cu128'" },
+  { index = "pytorch-rocm", marker = "extra != 'cpu' and extra != 'cu128' and extra == 'rocm'" },
+]
+torchvision = [
+  { index = "pytorch-cpu", marker = "extra == 'cpu'" },
+  { index = "pytorch-cu128", marker = "extra != 'cpu' and extra == 'cu128'" },
+  { index = "pytorch-rocm", marker = "extra != 'cpu' and extra != 'cu128' and extra == 'rocm'" },
+]
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 py-modules = ["run_single", "run_fed_client", "run_fed_server"]
@@ -31,6 +53,20 @@ where = ["src"]
 semantic-run-single = "run_single:main"
 semantic-run-fed-client = "run_fed_client:main"
 semantic-run-fed-server = "run_fed_server:main"
+
+[project.optional-dependencies]
+cpu = [
+    "torch==2.5.1+cpu ; sys_platform == 'linux'",
+    "torchvision==0.20.1+cpu ; sys_platform == 'linux'",
+]
+cu128 = [
+    "torch==2.5.1+cu128 ; sys_platform == 'linux'",
+    "torchvision==0.20.1+cu128 ; sys_platform == 'linux'",
+]
+rocm = [
+    "torch==2.5.1+rocm6.4 ; sys_platform == 'linux'",
+    "torchvision==0.20.1+rocm6.4 ; sys_platform == 'linux'",
+]
 
 [build-system]
 requires = ["setuptools>=65", "wheel"]
