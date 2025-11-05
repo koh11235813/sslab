@@ -1,0 +1,35 @@
+version: "3.9"
+
+x-app: &app
+  build:
+    context: .
+    args:
+      UV_EXTRA: ${UV_EXTRA:-cpu}
+  image: semantic-net-manylinux:${UV_EXTRA:-cpu}
+  environment:
+    UV_EXTRA: ${UV_EXTRA:-cpu}
+  working_dir: /opt/semantic
+
+services:
+  workspace:
+    <<: *app
+    command: ["sleep", "infinity"]
+    tty: true
+    stdin_open: true
+
+  run-single:
+    <<: *app
+    command: ["python", "run_single.py", "--task", "disaster", "--epochs", "1"]
+
+  server:
+    <<: *app
+    command: ["python", "run_fed_server.py", "--port", "8080", "--rounds", "3"]
+    ports:
+      - "8080:8080"
+
+  client:
+    <<: *app
+    command: ["python", "run_fed_client.py", "--config", "configs/task_disaster.yaml", "--server", "server:8080"]
+    depends_on:
+      server:
+        condition: service_started

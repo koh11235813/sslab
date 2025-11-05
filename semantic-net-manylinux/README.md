@@ -19,3 +19,22 @@ After syncing with the desired extra, verify PyTorch by running:
 ```sh
 uv run python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
+
+## Docker Compose
+Build and run the project inside containers using the bundled Docker configuration:
+
+```sh
+# Build the CPU image (set UV_EXTRA=cu128 or UV_EXTRA=rocm for GPU backends)
+docker compose build
+
+# Run a quick single-device training loop
+docker compose run --rm run-single
+
+# Start a Flower server (exposes port 8080) and attach a client
+docker compose up client
+```
+
+For interactive experiments, drop into a shell that has the synced environment:
+```sh
+docker compose run --rm workspace bash
+```
