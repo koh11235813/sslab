@@ -5,3 +5,16 @@
 .venv
 __pycache__
 request.md
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+.uv/
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+.idea/
+.vscode/
+checkpoints
