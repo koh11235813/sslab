@@ -69,34 +69,10 @@ url = "https://download.pytorch.org/whl/cpu"
 explicit = true
 
 [[tool.uv.index]]
-<<<<<<< HEAD
 name = "pytorch-triton-rocm"
 url = "https://download.pytorch.org/whl/"
 explicit = true
 
-=======
-name = "pytorch-cu128"
-url = "https://download.pytorch.org/whl/cu128"
-explicit = true
-
-[[tool.uv.index]]
-name = "pytorch-rocm"
-url = "https://download.pytorch.org/whl/rocm6.4"
-explicit = true
-
-[tool.uv.sources]
-torch = [
-  { index = "pytorch-cpu", marker = "extra == 'cpu'" },
-  { index = "pytorch-cu128", marker = "extra != 'cpu' and extra == 'cu128'" },
-  { index = "pytorch-rocm", marker = "extra != 'cpu' and extra != 'cu128' and extra == 'rocm'" },
-]
-torchvision = [
-  { index = "pytorch-cpu", marker = "extra == 'cpu'" },
-  { index = "pytorch-cu128", marker = "extra != 'cpu' and extra == 'cu128'" },
-  { index = "pytorch-rocm", marker = "extra != 'cpu' and extra != 'cu128' and extra == 'rocm'" },
-]
-
->>>>>>> dcc7c770dccb1e95612a6eda5c7f8e3fb950e026
 [tool.setuptools]
 package-dir = {"" = "src"}
 py-modules = ["run_single", "run_fed_client", "run_fed_server"]
@@ -108,20 +84,6 @@ where = ["src"]
 semantic-run-single = "run_single:main"
 semantic-run-fed-client = "run_fed_client:main"
 semantic-run-fed-server = "run_fed_server:main"
-
-[project.optional-dependencies]
-cpu = [
-    "torch==2.5.1+cpu ; sys_platform == 'linux'",
-    "torchvision==0.20.1+cpu ; sys_platform == 'linux'",
-]
-cu128 = [
-    "torch==2.5.1+cu128 ; sys_platform == 'linux'",
-    "torchvision==0.20.1+cu128 ; sys_platform == 'linux'",
-]
-rocm = [
-    "torch==2.5.1+rocm6.4 ; sys_platform == 'linux'",
-    "torchvision==0.20.1+rocm6.4 ; sys_platform == 'linux'",
-]
 
 [build-system]
 requires = ["setuptools>=65", "wheel"]
