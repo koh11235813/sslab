@@ -17,3 +17,4 @@ src/dataset/RescueNet
 src/dataset/RescueNet_patches
 src/dataset/ColorMasks-RescueNet.zip
 src/dataset/RescueNet.zip
+src/dataset/RescueNet_patches.zip
