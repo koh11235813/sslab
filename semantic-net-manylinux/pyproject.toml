@@ -8,21 +8,74 @@ requires-python = ">=3.10,<3.12"
 license = "MIT"
 authors = [{ name = "koh1123813" }]
 dependencies = [
+  "flwr>=1.23.0",
   "numpy>=1.24,<2.0",
   "pyyaml>=6.0",
-  "flwr>=1.7",
-  # Torch-family dependencies are chosen via extras
+  "tqdm>=4.67.1",
+  "transformers>=4.44.0",
 ]
+
+[project.optional-dependencies]
+cpu = [
+  "torch>=2.9.1",
+  "torchvision >=0.24",
+]
+cu128 = [
+  "torch>=2.9.1",
+  "torchvision >=0.24",
+]
+rocm = [
+  "pytorch-triton-rocm == 3.5.1; sys_platform == 'linux' and platform_machine == 'x86_64'",
+  "torch == 2.9.1+rocm6.4; sys_platform == 'linux' and platform_machine == 'x86_64'",
+  "torchvision >=0.24; sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
+
+[tool.uv]
+conflicts = [
+  [
+    { extra = "cu128" },
+    { extra = "rocm" },
+  ],
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", extra = "cpu" , marker = "sys_platform == 'darwin' or (sys_platform == 'linux' and platform_machine == 'aarch64')"},
+  { index = "pytorch-cu128", extra = "cu128", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+  { index = "pytorch-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+]
+torchvision = [
+  { index = "pytorch-cpu", extra = "cpu" , marker = "sys_platform == 'darwin' or (sys_platform == 'linux' and platform_machine == 'aarch64')"},
+  { index = "pytorch-cu128", extra = "cu128", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+  { index = "pytorch-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+]
+pytorch-triton-rocm = [
+  { index = "pytorch-triton-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-rocm"
+url = "https://download.pytorch.org/whl/rocm6.4"
+explicit = true
 
 [[tool.uv.index]]
 name = "pytorch-cpu"
 url = "https://download.pytorch.org/whl/cpu"
 explicit = true
 
+[[tool.uv.index]]
+name = "pytorch-triton-rocm"
+url = "https://download.pytorch.org/whl/"
+explicit = true
+
 [tool.setuptools]
 package-dir = {"" = "src"}
 py-modules = ["run_single", "run_fed_client", "run_fed_server"]
-
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -1,0 +1,76 @@
+.
+├── configs
+│   └── task_disaster.yaml
+├── docker-compose.yaml
+├── Dockerfile
+├── LICENSE
+├── pyproject.toml
+├── README.md
+├── scripts
+│   └── smoke.py
+├── src
+│   ├── dataset
+│   │   ├── resize.py
+│   │   ├── sample_patch_data_512x512
+│   │   │   └── train
+│   │   │       ├── images
+│   │   │       │   ├── 10778_y0_x0.png
+│   │   │       │   ├── 10778_y0_x1024.png
+│   │   │       │   ├── 10778_y0_x1536.png
+│   │   │       │   ├── 10778_y0_x512.png
+│   │   │       │   ├── 10778_y1024_x0.png
+│   │   │       │   ├── 10778_y1024_x1024.png
+│   │   │       │   ├── 10778_y1024_x1536.png
+│   │   │       │   ├── 10778_y1024_x512.png
+│   │   │       │   ├── 10778_y512_x0.png
+│   │   │       │   ├── 10778_y512_x1024.png
+│   │   │       │   ├── 10778_y512_x1536.png
+│   │   │       │   └── 10778_y512_x512.png
+│   │   │       └── masks
+│   │   │           ├── 10778_y0_x0.png
+│   │   │           ├── 10778_y0_x1024.png
+│   │   │           ├── 10778_y0_x1536.png
+│   │   │           ├── 10778_y0_x512.png
+│   │   │           ├── 10778_y1024_x0.png
+│   │   │           ├── 10778_y1024_x1024.png
+│   │   │           ├── 10778_y1024_x1536.png
+│   │   │           ├── 10778_y1024_x512.png
+│   │   │           ├── 10778_y512_x0.png
+│   │   │           ├── 10778_y512_x1024.png
+│   │   │           ├── 10778_y512_x1536.png
+│   │   │           └── 10778_y512_x512.png
+│   │   └── tree.txt
+│   ├── federated
+│   │   ├── client.py
+│   │   ├── __init__.py
+│   │   └── server.py
+│   ├── run_fed_client.py
+│   ├── run_fed_server.py
+│   ├── run_single.py
+│   ├── semantic
+│   │   ├── decoder.py
+│   │   ├── encoder.py
+│   │   ├── __init__.py
+│   │   └── rate_controller.py
+│   ├── task
+│   │   ├── disaster
+│   │   │   ├── __init__.py
+│   │   │   ├── metrics.py
+│   │   │   ├── model.py
+│   │   │   └── preprocess.py
+│   │   ├── __init__.py
+│   │   └── netqos
+│   │       ├── __init__.py
+│   │       ├── metrics.py
+│   │       ├── model.py
+│   │       └── preprocess.py
+│   ├── train_segformer_b0.py
+│   └── transport
+│       ├── ad_hoc.py
+│       ├── __init__.py
+│       └── proto.py
+├── tree.txt
+└── uv.lock
+
+15 directories, 58 files
+/home/kinoko/development/github/sslab/semantic-net-manylinux
