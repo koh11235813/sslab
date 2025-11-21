@@ -1,0 +1,4 @@
+*.pt filter=lfs diff=lfs merge=lfs -text
+*.pth filter=lfs diff=lfs merge=lfs -text
+semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt filter=lfs diff=lfs merge=lfs -text
+semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt filter=lfs diff=lfs merge=lfs -text
