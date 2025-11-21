@@ -1,3 +1,3 @@
-from .Dataset import RescueNet_patches
+from .Dataset import RescueNetPatches
 
 __all__ = ["RescueNetPatches"]
