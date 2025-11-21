@@ -11,6 +11,7 @@ build/
 .DS_Store
 .idea/
 .vscode/
+tree.txt
 src/dataset/ColorMasks
 src/dataset/RescueNet
 src/dataset/RescueNet_patches/train

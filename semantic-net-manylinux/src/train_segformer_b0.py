@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import SegformerForSemanticSegmentation
 
-from .dataset import RescueNetPatches
+from dataset.rescuenet_patches import RescueNetPatches
 
 NUM_CLASSES = 11
 
