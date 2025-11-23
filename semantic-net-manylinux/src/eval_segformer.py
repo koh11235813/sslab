@@ -32,6 +32,8 @@ def build_model(model_name: str, device: torch.device):
         ckpt = "nvidia/segformer-b0-finetuned-ade-512-512"
     elif model_name == "b1":
         ckpt = "nvidia/segformer-b1-finetuned-ade-512-512"
+    elif model_name == "b2":
+        ckpt = "nvidia/segformer-b2-finetuned-ade-512-512"
     else:
         raise ValueError(f"unknown model_name: {model_name}")
 
@@ -86,7 +88,7 @@ def parse_args():
     p.add_argument("--split", type=str, default="test",
                   choices=["train", "val", "test"])
     p.add_argument("--model", type=str, required=True,
-                  choices=["b0", "b1"])
+                  choices=["b0", "b1", "b2"])
     p.add_argument("--checkpoint", type=str, required=True)
     p.add_argument("--batch_size", type=int, default=8)
     p.add_argument("--num_workers", type=int, default=4)
