@@ -1,0 +1,57 @@
+yamakawa-kohsuke@yamakawakohsuke-jetson:~/development/github/sslab/semantic-net$ uv run --frozen src/measure_latency_jetson.py --data_root src/dataset/RescueNet_patches/ --split test --model b2 --checkpoint checkpoints_segformer_b2/best_segformer_b2.pt > result_b2.txt 
+config.json: 6.88kB [00:00, 11.1MB/s]
+model.safetensors: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 110M/110M [00:02<00:00, 37.9MB/s]
+Some weights of SegformerForSemanticSegmentation were not initialized from the model checkpoint at nvidia/segformer-b2-finetuned-ade-512-512 and are newly initialized because the shapes did not match:
+- decode_head.classifier.bias: found shape torch.Size([150]) in the checkpoint and torch.Size([11]) in the model instantiated
+- decode_head.classifier.weight: found shape torch.Size([150, 768, 1, 1]) in the checkpoint and torch.Size([11, 768, 1, 1]) in the model instantiated
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_jetson.py:56: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  ckpt = torch.load(ckpt_path, map_location=device)
+NvMapMemAllocInternalTagged: 1075072515 error 12
+NvMapMemHandleAlloc: error 0
+NvMapMemAllocInternalTagged: 1075072515 error 12
+NvMapMemHandleAlloc: error 0
+NvMapMemAllocInternalTagged: 1075072515 error 12
+NvMapMemHandleAlloc: error 0
+NvMapMemAllocInternalTagged: 1075072515 error 12
+NvMapMemHandleAlloc: error 0
+NvMapMemAllocInternalTagged: 1075072515 error 12
+NvMapMemHandleAlloc: error 0
+NvMapMemAllocInternalTagged: 1075072515 error 12
+NvMapMemHandleAlloc: error 0
+NvMapMemAllocInternalTagged: 1075072515 error 12
+NvMapMemHandleAlloc: error 0
+NvMapMemAllocInternalTagged: 1075072515 error 12
+NvMapMemHandleAlloc: error 0
+NvMapMemAllocInternalTagged: 1075072515 error 12
+NvMapMemHandleAlloc: error 0
+Traceback (most recent call last):
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_jetson.py", line 159, in <module>
+    main()
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_jetson.py", line 144, in main
+    mean_ms, std_ms, _ = measure_latency(
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_jetson.py", line 106, in measure_latency
+    _ = run_once(img)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_jetson.py", line 90, in run_once
+    out = model(pixel_values=img)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1714, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1725, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/transformers/models/segformer/modeling_segformer.py", line 720, in forward
+    logits = self.decode_head(encoder_hidden_states)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1714, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1725, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/transformers/models/segformer/modeling_segformer.py", line 651, in forward
+    logits = self.classifier(hidden_states)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1714, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1725, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 549, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 544, in _conv_forward
+    return F.conv2d(
+RuntimeError: NVML_SUCCESS == r INTERNAL ASSERT FAILED at "/opt/pytorch/pytorch/c10/cuda/CUDACachingAllocator.cpp":838, please report a bug to PyTorch. 
