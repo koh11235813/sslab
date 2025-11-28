@@ -45,6 +45,7 @@ def build_model(variant: str, device: torch.device):
         id2label=ID2LABEL,
         label2id=LABEL2ID,
         ignore_mismatched_sizes=True,
+        use_safetensors=True,
     )
     model.to(device)
     model.eval()
