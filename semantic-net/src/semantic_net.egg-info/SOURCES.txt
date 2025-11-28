@@ -3,6 +3,9 @@ pyproject.toml
 src/run_fed_client.py
 src/run_fed_server.py
 src/run_single.py
+src/dataset/__init__.py
+src/dataset/rescuenet_patches.py
+src/dataset/resize.py
 src/dataset/RescueNet_patches/Dataset.py
 src/dataset/RescueNet_patches/show_count.py
 src/federated/__init__.py

@@ -6,11 +6,11 @@ Author: koh11235813
 License-Expression: MIT
 Requires-Python: >=3.9
 Description-Content-Type: text/markdown
-Requires-Dist: torch<2.6,>=2.4
-Requires-Dist: torchvision<0.21.0,>=0.19.0
 Requires-Dist: numpy<2.0,>=1.24
-Requires-Dist: pyyaml>=6.0
 Requires-Dist: flwr>=1.7
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: tqdm>=4.67.1
+Requires-Dist: transformers>=4.44.0
 Provides-Extra: dev
 Requires-Dist: pytest>=7.4; extra == "dev"
 Provides-Extra: jetson
