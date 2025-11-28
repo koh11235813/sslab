@@ -10,8 +10,8 @@ class RescueNetPatches(Dataset):
     def __init__(self, root_dir, split="train"):
         self.root_dir = Path(root_dir)
         self.split = split
-        self.img_dir = self.root_dir / split / "images"
-        self.mask_dir = self.root_dir / split / "masks"
+        self.img_dir = self.root_dir /f"RescueNet_patches"/ split / "images"
+        self.mask_dir = self.root_dir /f"RescueNet_patches"/ split / "masks"
 
         self.img_paths = sorted(self.img_dir.glob("*.png"))
         assert len(self.img_paths) > 0, f"no patch images found in {self.img_dir}"
