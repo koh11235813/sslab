@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import List
 
 import torch
+import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import SegformerForSemanticSegmentation
@@ -55,16 +56,16 @@ LABEL2ID = {v: k for k, v in ID2LABEL.items()}
 #   - vehicle / pool は中くらい
 VALUE_WEIGHTS = torch.tensor(
     [
-        0.5,  # 0: background
+        0.1,  # 0: background
         1.0,  # 1: water
-        1.5,  # 2: building_no_damage
-        1.5,  # 3: building_minor_damage
-        1.5,  # 4: building_major_damage
-        1.5,  # 5: building_total_destruction
-        1.5,  # 6: vehicle
-        1.5,  # 7: road_clear
+        1.0,  # 2: building_no_damage
+        2.0,  # 3: building_minor_damage
+        2.0,  # 4: building_major_damage
+        2.0,  # 5: building_total_destruction
+        1.0,  # 6: vehicle
+        2.0,  # 7: road_clear
         2.0,  # 8: road_blocked
-        1.0,  # 9: tree
+        0.5,  # 9: tree
         1.0,  # 10: pool
     ],
     dtype=torch.float32,
@@ -178,12 +179,26 @@ def process_split(
         imgs = imgs.to(device, non_blocking=True)
         masks = masks.to(device, non_blocking=True)
 
+        # B0: 出力を mask と同じ HxW に upsample してから argmax
         out_b0 = model_b0(pixel_values=imgs)
-        logits_b0 = out_b0.logits  # (B, C, H, W)
+        logits_b0 = out_b0.logits  # (B, C, h, w)
+        logits_b0 = F.interpolate(
+            logits_b0,
+            size=masks.shape[-2:],  # (H, W)
+            mode="bilinear",
+            align_corners=False,
+        )
         preds_b0 = logits_b0.argmax(dim=1)  # (B, H, W)
 
+        # B1 も同様
         out_b1 = model_b1(pixel_values=imgs)
         logits_b1 = out_b1.logits
+        logits_b1 = F.interpolate(
+            logits_b1,
+            size=masks.shape[-2:],
+            mode="bilinear",
+            align_corners=False,
+        )
         preds_b1 = logits_b1.argmax(dim=1)
 
         bsz = imgs.size(0)
