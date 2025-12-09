@@ -222,7 +222,7 @@ def parse_args():
     parser.add_argument(
         "--data_root",
         type=str,
-        default="src/dataset/RescueNet_patches",
+        default="src/dataset",
     )
     parser.add_argument(
         "--splits",
