@@ -1,5 +1,6 @@
 # src/eval_segformer_fp16.py
 import argparse
+from contextlib import nullcontext
 from pathlib import Path
 
 import torch
@@ -51,21 +52,27 @@ def build_model(model_name: str, device: torch.device):
 def evaluate(model, loader, device):
     model.eval()
 
-    inter = torch.zeros(NUM_CLASSES, dtype=torch.float16, device=device)
-    union = torch.zeros(NUM_CLASSES, dtype=torch.float16, device=device)
+    inter = torch.zeros(NUM_CLASSES, dtype=torch.float64, device=device)
+    union = torch.zeros(NUM_CLASSES, dtype=torch.float64, device=device)
+
+    if device.type == "cuda":
+        amp_ctx = torch.amp.autocast("cuda", dtype=torch.float16)
+    else:
+        amp_ctx = nullcontext()
 
     for images, masks in loader:
         images = images.to(device, non_blocking=True)
         masks = masks.to(device, non_blocking=True)
 
-        outputs = model(pixel_values=images)
-        logits = outputs.logits
-        logits = F.interpolate(
-            logits,
-            size=masks.shape[-2:],
-            mode="bilinear",
-            align_corners=False,
-        )
+        with amp_ctx:
+            outputs = model(pixel_values=images)
+            logits = outputs.logits
+            logits = F.interpolate(
+                logits,
+                size=masks.shape[-2:],
+                mode="bilinear",
+                align_corners=False,
+            )
 
         preds = logits.argmax(dim=1)
 
