@@ -6,7 +6,7 @@ from pathlib import Path
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from transformers import SegformerForSemanticSegmentation
+from transformers import SegformerConfig, SegformerForSemanticSegmentation
 
 from dataset.rescuenet_patches import RescueNetPatches  # さっきのクラス
 
@@ -28,23 +28,31 @@ ID2LABEL = {
 LABEL2ID = {v: k for k, v in ID2LABEL.items()}
 
 
-def build_model(model_name: str, device: torch.device):
-    if model_name == "b0":
-        ckpt = "nvidia/segformer-b0-finetuned-ade-512-512"
-    elif model_name == "b1":
-        ckpt = "nvidia/segformer-b1-finetuned-ade-512-512"
-    elif model_name == "b2":
-        ckpt = "nvidia/segformer-b2-finetuned-ade-512-512"
+def build_model(variant: str, device: torch.device) -> SegformerForSemanticSegmentation:
+    """
+    HF の from_pretrained で重みは読まない。
+    - Config だけ HF から取ってくる
+    - モデル本体はその config で初期化
+    - 重みは後で自前 ckpt から load_checkpoint で読む
+    """
+    if variant == "b0":
+        base_name = "nvidia/segformer-b0-finetuned-ade-512-512"
+    elif variant == "b1":
+        base_name = "nvidia/segformer-b1-finetuned-ade-512-512"
+    elif variant == "b2":
+        base_name = "nvidia/segformer-b2-finetuned-ade-512-512"
     else:
-        raise ValueError(f"unknown model_name: {model_name}")
+        raise ValueError(f"unknown variant: {variant}")
 
-    model = SegformerForSemanticSegmentation.from_pretrained(
-        ckpt,
-        num_labels=NUM_CLASSES,
-        id2label=ID2LABEL,
-        label2id=LABEL2ID,
-        ignore_mismatched_sizes=True,
-    ).to(device)
+    # ここでは config.json しか取ってこないので torch.load は呼ばれない
+    config = SegformerConfig.from_pretrained(base_name)
+    config.num_labels = NUM_CLASSES
+    config.id2label = ID2LABEL
+    config.label2id = LABEL2ID
+
+    model = SegformerForSemanticSegmentation(config)
+    model.to(device)
+    model.eval()
     return model
 
 
