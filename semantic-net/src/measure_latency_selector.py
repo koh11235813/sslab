@@ -116,10 +116,25 @@ def build_segformer(
 
 def load_segformer_checkpoint(model: nn.Module, ckpt_path: Path, device: torch.device):
     ckpt = torch.load(ckpt_path, map_location=device)
-    if isinstance(ckpt, dict) and "model" in ckpt:
-        state_dict = ckpt["model"]
+    # 学習スクリプト側の保存形式に合わせる
+    # torch.save({
+    #   'epoch': ...,
+    #   'model_state_dict': model.state_dict(),
+    #   'optimizer_state_dict': ...,
+    #   'best_miou': ...,
+    #   'args': ...,
+    # }, path)
+    if isinstance(ckpt, dict):
+        if "model_state_dict" in ckpt:
+            state_dict = ckpt["model_state_dict"]
+        elif "state_dict" in ckpt:
+            state_dict = ckpt["state_dict"]
+        else:
+            # そのまま state_dict だとみなす
+            state_dict = ckpt
     else:
         state_dict = ckpt
+
     missing, unexpected = model.load_state_dict(state_dict, strict=False)
     if missing:
         print(f"[warn] missing keys in state_dict: {missing}")
@@ -130,17 +145,15 @@ def load_segformer_checkpoint(model: nn.Module, ckpt_path: Path, device: torch.d
 # ============================================================
 # Selector MLP (学習と同じ構造にすること)
 # ============================================================
-
-
 class SelectorMLP(nn.Module):
     def __init__(self, in_dim: int, hidden_dim: int = 64):
         super().__init__()
+        # ★ 学習時と同じ 2 層 MLP:
+        #   Linear(in_dim, hidden_dim) -> ReLU -> Linear(hidden_dim, 2)
         self.net = nn.Sequential(
             nn.Linear(in_dim, hidden_dim),
             nn.ReLU(inplace=True),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.ReLU(inplace=True),
-            nn.Linear(hidden_dim, 2),  # 出力: [P(B0), P(B1)]
+            nn.Linear(hidden_dim, 2),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
