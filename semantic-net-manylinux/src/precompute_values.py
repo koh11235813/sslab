@@ -188,9 +188,21 @@ def process_split(
         with amp_ctx:
             out_b0 = model_b0(pixel_values=imgs)
             logits_b0 = out_b0.logits  # (B, C, H, W)
+            logits_b1 = F.interpolate(
+                logits_b0,
+                size=masks.shape[-2:],
+                mode="bilinear",
+                align_corners=False,
+            )
 
             out_b1 = model_b1(pixel_values=imgs)
             logits_b1 = out_b1.logits  # (B, C, H, W)
+            logits_b1 = F.interpolate(
+                logits_b0,
+                size=masks.shape[-2:],
+                mode="bilinear",
+                align_corners=False,
+            )
 
         # # B0: 出力を mask と同じ HxW に upsample してから argmax
         # out_b0 = model_b0(pixel_values=imgs)
