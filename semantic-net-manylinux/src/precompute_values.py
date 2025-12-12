@@ -204,28 +204,6 @@ def process_split(
                 align_corners=False,
             )
 
-        # # B0: 出力を mask と同じ HxW に upsample してから argmax
-        # out_b0 = model_b0(pixel_values=imgs)
-        # logits_b0 = out_b0.logits  # (B, C, h, w)
-        # logits_b0 = F.interpolate(
-        #     logits_b0,
-        #     size=masks.shape[-2:],  # (H, W)
-        #     mode="bilinear",
-        #     align_corners=False,
-        # )
-        # preds_b0 = logits_b0.argmax(dim=1)  # (B, H, W)
-
-        # # B1 も同様
-        # out_b1 = model_b1(pixel_values=imgs)
-        # logits_b1 = out_b1.logits
-        # logits_b1 = F.interpolate(
-        #     logits_b1,
-        #     size=masks.shape[-2:],
-        #     mode="bilinear",
-        #     align_corners=False,
-        # )
-        # preds_b1 = logits_b1.argmax(dim=1)
-
         preds_b0 = logits_b0.argmax(dim=1)  # (B, H, W)
         preds_b1 = logits_b1.argmax(dim=1)  # (B, H, W)
 
