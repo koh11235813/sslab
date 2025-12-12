@@ -19,6 +19,7 @@ w_c は「建物損傷度・道路・水」を重くするようにここで決�
 
 import argparse
 import csv
+from contextlib import nullcontext
 from pathlib import Path
 from typing import List
 
@@ -158,6 +159,7 @@ def process_split(
     batch_size: int,
     num_workers: int,
     device: torch.device,
+    use_autocast: bool,
 ) -> List[dict]:
     """
     1 split 分の Value_B0 / Value_B1 を計算して、行 (dict) のリストを返す。
@@ -173,33 +175,47 @@ def process_split(
 
     rows = []
     global_idx = 0
+    if use_autocast and device.type == "cuda":
+        amp_ctx = torch.amp.autocast("cuda", dtype=torch.float16)
+    else:
+        amp_ctx = nullcontext()
 
     pbar = tqdm(loader, desc=f"split={split}", total=len(loader))
     for imgs, masks in pbar:
         imgs = imgs.to(device, non_blocking=True)
         masks = masks.to(device, non_blocking=True)
 
-        # B0: 出力を mask と同じ HxW に upsample してから argmax
-        out_b0 = model_b0(pixel_values=imgs)
-        logits_b0 = out_b0.logits  # (B, C, h, w)
-        logits_b0 = F.interpolate(
-            logits_b0,
-            size=masks.shape[-2:],  # (H, W)
-            mode="bilinear",
-            align_corners=False,
-        )
-        preds_b0 = logits_b0.argmax(dim=1)  # (B, H, W)
+        with amp_ctx:
+            out_b0 = model_b0(pixel_values=imgs)
+            logits_b0 = out_b0.logits  # (B, C, H, W)
 
-        # B1 も同様
-        out_b1 = model_b1(pixel_values=imgs)
-        logits_b1 = out_b1.logits
-        logits_b1 = F.interpolate(
-            logits_b1,
-            size=masks.shape[-2:],
-            mode="bilinear",
-            align_corners=False,
-        )
-        preds_b1 = logits_b1.argmax(dim=1)
+            out_b1 = model_b1(pixel_values=imgs)
+            logits_b1 = out_b1.logits  # (B, C, H, W)
+
+        # # B0: 出力を mask と同じ HxW に upsample してから argmax
+        # out_b0 = model_b0(pixel_values=imgs)
+        # logits_b0 = out_b0.logits  # (B, C, h, w)
+        # logits_b0 = F.interpolate(
+        #     logits_b0,
+        #     size=masks.shape[-2:],  # (H, W)
+        #     mode="bilinear",
+        #     align_corners=False,
+        # )
+        # preds_b0 = logits_b0.argmax(dim=1)  # (B, H, W)
+
+        # # B1 も同様
+        # out_b1 = model_b1(pixel_values=imgs)
+        # logits_b1 = out_b1.logits
+        # logits_b1 = F.interpolate(
+        #     logits_b1,
+        #     size=masks.shape[-2:],
+        #     mode="bilinear",
+        #     align_corners=False,
+        # )
+        # preds_b1 = logits_b1.argmax(dim=1)
+
+        preds_b0 = logits_b0.argmax(dim=1)  # (B, H, W)
+        preds_b1 = logits_b1.argmax(dim=1)  # (B, H, W)
 
         bsz = imgs.size(0)
         for bi in range(bsz):
@@ -267,6 +283,11 @@ def parse_args():
         type=str,
         default="cuda" if torch.cuda.is_available() else "cpu",
     )
+    parser.add_argument(
+        "--fp16",
+        action="store_true",
+        help="use torch.amp.autocast('cuda', dtype=torch.float16) for model forward",
+    )
     return parser.parse_args()
 
 
@@ -302,6 +323,7 @@ def main():
             batch_size=args.batch_size,
             num_workers=args.num_workers,
             device=device,
+            use_autocast=args.fp16,
         )
         all_rows.extend(rows)
 
