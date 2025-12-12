@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-measure_latency_selector_jetson.py
+measure_latency_selector.py
 
 Jetson 上で「セレクタ付き推論パイプライン」のレイテンシを計測するスクリプト。
 
@@ -26,11 +26,11 @@ import torch
 from PIL import Image
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
-from transformers import SegformerForSemanticSegmentation
+from transformers import SegformerConfig, SegformerForSemanticSegmentation
 
-# ------------------------------------------------------------
+# ============================================================
 # Dataset: RescueNetPatches (画像のみ, mask は不要)
-# ------------------------------------------------------------
+# ============================================================
 
 
 class RescueNetPatches(Dataset):
@@ -63,9 +63,9 @@ class RescueNetPatches(Dataset):
         return tensor, path.name
 
 
-# ------------------------------------------------------------
+# ============================================================
 # SegFormer モデル構築 & checkpoint ロード
-# ------------------------------------------------------------
+# ============================================================
 
 NUM_CLASSES = 11
 
@@ -75,6 +75,10 @@ def build_segformer(
 ) -> SegformerForSemanticSegmentation:
     """
     variant: 'b0' or 'b1'
+
+    ここでは HuggingFace の「重み」は一切使わない。
+    SegformerConfig だけを取得して、アーキテクチャを組み立てる。
+    （重みは後で fine-tuned ckpt からロードする）
     """
     if variant not in ("b0", "b1"):
         raise ValueError(f"unknown variant: {variant}")
@@ -96,13 +100,15 @@ def build_segformer(
     }
     label2id = {v: k for k, v in id2label.items()}
 
-    model = SegformerForSemanticSegmentation.from_pretrained(
+    # ★ 重要: from_pretrained(…) で .bin を読ませない。
+    #   -> Config だけ取得して num_labels/id2label/label2id を上書き
+    cfg = SegformerConfig.from_pretrained(
         hf_name,
         num_labels=NUM_CLASSES,
         id2label=id2label,
         label2id=label2id,
-        ignore_mismatched_sizes=True,
     )
+    model = SegformerForSemanticSegmentation(cfg)
     model.to(device)
     model.eval()
     return model
@@ -121,9 +127,9 @@ def load_segformer_checkpoint(model: nn.Module, ckpt_path: Path, device: torch.d
         print(f"[warn] unexpected keys in state_dict: {unexpected}")
 
 
-# ------------------------------------------------------------
+# ============================================================
 # Selector MLP (学習と同じ構造にすること)
-# ------------------------------------------------------------
+# ============================================================
 
 
 class SelectorMLP(nn.Module):
@@ -141,9 +147,9 @@ class SelectorMLP(nn.Module):
         return self.net(x)
 
 
-# ------------------------------------------------------------
+# ============================================================
 # B0 ロジットから特徴量を作る
-# ------------------------------------------------------------
+# ============================================================
 
 
 def extract_features_from_logits(
@@ -175,9 +181,9 @@ def extract_features_from_logits(
     return feats
 
 
-# ------------------------------------------------------------
+# ============================================================
 # レイテンシ計測ループ
-# ------------------------------------------------------------
+# ============================================================
 
 
 def measure_latency_selector(
@@ -295,9 +301,9 @@ def measure_latency_selector(
     print(f"  frac_B1       : {frac_b1 * 100:.2f} %  (B1 を選択した割合)")
 
 
-# ------------------------------------------------------------
+# ============================================================
 # CLI
-# ------------------------------------------------------------
+# ============================================================
 
 
 def parse_args():
@@ -306,7 +312,7 @@ def parse_args():
         "--data_root",
         type=str,
         required=True,
-        help="RescueNet_patches の root ディレクトリ (例: src/dataset/)",
+        help="RescueNet_patches の root ディレクトリ (例: src/dataset/RescueNet_patches)",
     )
     p.add_argument(
         "--split",
