@@ -10,6 +10,7 @@ authors = [{ name = "koh1123813" }]
 dependencies = [
   "flwr>=1.23.0",
   "numpy>=1.24,<2.0",
+  "pandas>=2.3.3",
   "pyyaml>=6.0",
   "tqdm>=4.67.1",
   "transformers>=4.44.0",
