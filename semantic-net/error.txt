@@ -1,0 +1,40 @@
+yamakawa-kohsuke@yamakawakohsuke-jetson:~/development/github/sslab/semantic-net$ uv run src/measure_latency_selector.py --data_root src/dataset/RescueNet_patches/ --split test --ckpt_b0 checkpoints_segformer_b0/best_segformer_b0.pt --ckpt_b1 checkpoints_segformer_b1/best_segformer_b1.pt --selector_ckpt ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0010.pt 
+device        = cuda
+data_root     = src/dataset/RescueNet_patches
+split         = test
+ckpt_b0       = checkpoints_segformer_b0/best_segformer_b0.pt
+ckpt_b1       = checkpoints_segformer_b1/best_segformer_b1.pt
+selector_ckpt = ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0010.pt
+iters         = 100
+warmup        = 10
+batch_size    = 1
+hidden_dim    = 64
+fp16          = False
+dataset size (split=test) = 4600
+[build] SegFormer-B0/B1 ...
+Some weights of SegformerForSemanticSegmentation were not initialized from the model checkpoint at nvidia/segformer-b0-finetuned-ade-512-512 and are newly initialized because the shapes did not match:
+- decode_head.classifier.bias: found shape torch.Size([150]) in the checkpoint and torch.Size([11]) in the model instantiated
+- decode_head.classifier.weight: found shape torch.Size([150, 256, 1, 1]) in the checkpoint and torch.Size([11, 256, 1, 1]) in the model instantiated
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Traceback (most recent call last):
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py", line 423, in <module>
+    main()
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py", line 405, in main
+    measure_latency_selector(
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py", line 216, in measure_latency_selector
+    model_b1 = build_segformer("b1", device)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py", line 99, in build_segformer
+    model = SegformerForSemanticSegmentation.from_pretrained(
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 277, in _wrapper
+    return func(*args, **kwargs)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 5048, in from_pretrained
+    ) = cls._load_pretrained_model(
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 5316, in _load_pretrained_model
+    load_state_dict(checkpoint_files[0], map_location="meta", weights_only=weights_only).keys()
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/transformers/modeling_utils.py", line 508, in load_state_dict
+    check_torch_load_is_safe()
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/transformers/utils/import_utils.py", line 1647, in check_torch_load_is_safe
+    raise ValueError(
+ValueError: Due to a serious vulnerability issue in `torch.load`, even with `weights_only=True`, we now require users to upgrade torch to at least v2.6 in order to use the function. This version restriction does not apply when loading files with safetensors.
+See the vulnerability report here https://nvd.nist.gov/vuln/detail/CVE-2025-32434
+
