@@ -198,7 +198,7 @@ def process_split(
             out_b1 = model_b1(pixel_values=imgs)
             logits_b1 = out_b1.logits  # (B, C, H, W)
             logits_b1 = F.interpolate(
-                logits_b0,
+                logits_b1,
                 size=masks.shape[-2:],
                 mode="bilinear",
                 align_corners=False,
