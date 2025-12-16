@@ -30,39 +30,41 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from transformers import SegformerConfig, SegformerForSemanticSegmentation
 
+from dataset.rescuenet_patches import RescueNetPatches
+
 # ============================================================
 # Dataset: RescueNetPatches (画像のみ, mask は不要)
 # ============================================================
 
 
-class RescueNetPatches(Dataset):
-    def __init__(self, root_dir: str, split: str = "test"):
-        self.root_dir = Path(root_dir)
-        self.split = split
-        self.img_dir = self.root_dir / split / "images"
-        self.img_paths = sorted(self.img_dir.glob("*.png"))
-        if len(self.img_paths) == 0:
-            raise RuntimeError(f"No .png files found in {self.img_dir}")
+# class RescueNetPatches(Dataset):
+#     def __init__(self, root_dir: str, split: str = "test"):
+#         self.root_dir = Path(root_dir)
+#         self.split = split
+#         self.img_dir = self.root_dir / split / "images"
+#         self.img_paths = sorted(self.img_dir.glob("*.png"))
+#         if len(self.img_paths) == 0:
+#             raise RuntimeError(f"No .png files found in {self.img_dir}")
 
-        # ImageNet mean/std (SegFormer 学習時と合わせる)
-        self.mean = [0.485, 0.456, 0.406]
-        self.std = [0.229, 0.224, 0.225]
+#         # ImageNet mean/std (SegFormer 学習時と合わせる)
+#         self.mean = [0.485, 0.456, 0.406]
+#         self.std = [0.229, 0.224, 0.225]
 
-    def __len__(self):
-        return len(self.img_paths)
+#     def __len__(self):
+#         return len(self.img_paths)
 
-    def __getitem__(self, idx):
-        path = self.img_paths[idx]
-        img = Image.open(path).convert("RGB")
-        arr = np.array(img).astype(np.float32) / 255.0  # HWC, [0,1]
-        arr = arr.transpose(2, 0, 1)  # CHW
-        tensor = torch.from_numpy(arr)  # (3,H,W)
+#     def __getitem__(self, idx):
+#         path = self.img_paths[idx]
+#         img = Image.open(path).convert("RGB")
+#         arr = np.array(img).astype(np.float32) / 255.0  # HWC, [0,1]
+#         arr = arr.transpose(2, 0, 1)  # CHW
+#         tensor = torch.from_numpy(arr)  # (3,H,W)
 
-        # normalize in-place
-        for c in range(3):
-            tensor[c] = (tensor[c] - self.mean[c]) / self.std[c]
+#         # normalize in-place
+#         for c in range(3):
+#             tensor[c] = (tensor[c] - self.mean[c]) / self.std[c]
 
-        return tensor, path.name
+#         return tensor, path.name
 
 
 # ============================================================
@@ -349,7 +351,7 @@ def measure_latency_selector(
     selector.eval()
 
     # Dataset / DataLoader
-    dataset = RescueNetPatches(split)
+    dataset = RescueNetPatches(data_root, split=split)
     if len(dataset) == 0:
         raise RuntimeError(f"dataset is empty: root={data_root}, split={split}")
     print(f"[dataset] split={split}, size={len(dataset)}")
