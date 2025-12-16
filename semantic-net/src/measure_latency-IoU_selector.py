@@ -349,7 +349,7 @@ def measure_latency_selector(
     selector.eval()
 
     # Dataset / DataLoader
-    dataset = RescueNetPatches(data_root=data_root, split=split)
+    dataset = RescueNetPatches(split)
     if len(dataset) == 0:
         raise RuntimeError(f"dataset is empty: root={data_root}, split={split}")
     print(f"[dataset] split={split}, size={len(dataset)}")
