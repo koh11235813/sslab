@@ -420,7 +420,7 @@ def measure_latency_selector(
 
             # B0 ログits から特徴量を抽出 → セレクタ
             feats = extract_features_from_logits(
-                logits_b0, num_classes=NUM_CLASSES, device=device
+                logits_b0, num_classes=NUM_CLASSES
             )
             logits_sel = selector(feats)  # (B, 2)
             actions = torch.argmax(logits_sel, dim=1)  # 0: use B0, 1: use B1
