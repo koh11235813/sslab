@@ -3,5 +3,73 @@ name = "federated-learning"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
-dependencies = []
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24,<2.0",
+    "flwr>=1.7",
+    "pyyaml>=6.0",
+    "tqdm>=4.67.1",
+    "transformers>=4.44.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+]
+jetson = [
+    "torch @ https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
+    "torchvision @ https://kinoko1943.org/files/torchvision-0.20.0a0+afc54f7-cp310-cp310-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64'",
+]
+
+cu124 = [
+  "torch==2.5.0",
+  "torchvision == 0.20",
+]
+rocm = [
+  "pytorch-triton-rocm == 3.1.0; sys_platform == 'linux' and platform_machine == 'x86_64'",
+  "torch == 2.5.0+rocm6.1; sys_platform == 'linux' and platform_machine == 'x86_64'",
+  "torchvision == 0.20; sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
+
+[tool.uv]
+conflicts = [
+  [
+    { extra = "cu124" },
+    { extra = "jetson" },
+    { extra = "rocm" },
+  ],
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu124", extra = "cu124", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+  { index = "pytorch-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+]
+torchvision = [
+  { index = "pytorch-cu124", extra = "cu124", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+  { index = "pytorch-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+]
+pytorch-triton-rocm = [
+  { index = "pytorch-triton-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-rocm"
+url = "https://download.pytorch.org/whl/rocm6.1"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-triton-rocm"
+url = "https://download.pytorch.org/whl/"
+explicit = true
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
