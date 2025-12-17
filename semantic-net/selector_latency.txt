@@ -1,0 +1,141 @@
+yamakawa-kohsuke@yamakawakohsuke-jetson:~/development/github/sslab/semantic-net$ uv run --frozen src/measure_latency_selector.py --data_root src/dataset/RescueNet_patches/ --split test --ckpt_b0 ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt --ckpt_b1 ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt --selector_ckpt ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0010.pt 
+device        = cuda
+data_root     = src/dataset/RescueNet_patches
+split         = test
+ckpt_b0       = ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt
+ckpt_b1       = ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt
+selector_ckpt = ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0010.pt
+iters         = 100
+warmup        = 10
+batch_size    = 1
+hidden_dim    = 64
+fp16          = False
+dataset size (split=test) = 4600
+[build] SegFormer-B0/B1 ...
+[load] B0 ckpt: ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:118: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  ckpt = torch.load(ckpt_path, map_location=device)
+[load] B1 ckpt: ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt
+[load] selector ckpt: ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0010.pt
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:247: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  selector.load_state_dict(torch.load(selector_ckpt, map_location=device))
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:270: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_autocast):
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:285: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_autocast):
+
+=== selector pipeline latency (Jetson) ===
+  split         : test
+  samples       : 100 (iters=100, warmup=10)
+  batch_size    : 1
+  avg_latency   : 82.028 ms / patch
+  std_latency   : 24.108 ms
+  frac_B1       : 85.00 %  (B1 を選択した割合)
+
+[done] total elapsed wall time = 41.3 sec
+yamakawa-kohsuke@yamakawakohsuke-jetson:~/development/github/sslab/semantic-net$ uv run --frozen src/measure_latency_selector.py --data_root src/dataset/RescueNet_patches/ --split test --ckpt_b0 ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt --ckpt_b1 ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt --selector_ckpt ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0050.pt 
+device        = cuda
+data_root     = src/dataset/RescueNet_patches
+split         = test
+ckpt_b0       = ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt
+ckpt_b1       = ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt
+selector_ckpt = ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0050.pt
+iters         = 100
+warmup        = 10
+batch_size    = 1
+hidden_dim    = 64
+fp16          = False
+dataset size (split=test) = 4600
+[build] SegFormer-B0/B1 ...
+[load] B0 ckpt: ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:118: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  ckpt = torch.load(ckpt_path, map_location=device)
+[load] B1 ckpt: ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt
+[load] selector ckpt: ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0050.pt
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:247: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  selector.load_state_dict(torch.load(selector_ckpt, map_location=device))
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:270: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_autocast):
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:285: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_autocast):
+
+=== selector pipeline latency (Jetson) ===
+  split         : test
+  samples       : 100 (iters=100, warmup=10)
+  batch_size    : 1
+  avg_latency   : 61.914 ms / patch
+  std_latency   : 28.568 ms
+  frac_B1       : 42.00 %  (B1 を選択した割合)
+
+[done] total elapsed wall time = 32.8 sec
+yamakawa-kohsuke@yamakawakohsuke-jetson:~/development/github/sslab/semantic-net$ uv run --frozen src/measure_latency_selector.py --data_root src/dataset/RescueNet_patches/ --split test --ckpt_b0 ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt --ckpt_b1 ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt --selector_ckpt ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0010.pt --fp16
+device        = cuda
+data_root     = src/dataset/RescueNet_patches
+split         = test
+ckpt_b0       = ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt
+ckpt_b1       = ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt
+selector_ckpt = ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0010.pt
+iters         = 100
+warmup        = 10
+batch_size    = 1
+hidden_dim    = 64
+fp16          = True
+dataset size (split=test) = 4600
+[build] SegFormer-B0/B1 ...
+[load] B0 ckpt: ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:118: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  ckpt = torch.load(ckpt_path, map_location=device)
+[load] B1 ckpt: ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt
+[load] selector ckpt: ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0010.pt
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:247: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  selector.load_state_dict(torch.load(selector_ckpt, map_location=device))
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:270: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_autocast):
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:285: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_autocast):
+
+=== selector pipeline latency (Jetson) ===
+  split         : test
+  samples       : 100 (iters=100, warmup=10)
+  batch_size    : 1
+  avg_latency   : 71.499 ms / patch
+  std_latency   : 17.329 ms
+  frac_B1       : 89.00 %  (B1 を選択した割合)
+
+[done] total elapsed wall time = 36.0 sec
+yamakawa-kohsuke@yamakawakohsuke-jetson:~/development/github/sslab/semantic-net$ uv run --frozen src/measure_latency_selector.py --data_root src/dataset/RescueNet_patches/ --split test --ckpt_b0 ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt --ckpt_b1 ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt --selector_ckpt ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0050.pt --fp16
+device        = cuda
+data_root     = src/dataset/RescueNet_patches
+split         = test
+ckpt_b0       = ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt
+ckpt_b1       = ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt
+selector_ckpt = ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0050.pt
+iters         = 100
+warmup        = 10
+batch_size    = 1
+hidden_dim    = 64
+fp16          = True
+dataset size (split=test) = 4600
+[build] SegFormer-B0/B1 ...
+[load] B0 ckpt: ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:118: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  ckpt = torch.load(ckpt_path, map_location=device)
+[load] B1 ckpt: ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt
+[load] selector ckpt: ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0050.pt
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:247: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  selector.load_state_dict(torch.load(selector_ckpt, map_location=device))
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:270: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_autocast):
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency_selector.py:285: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_autocast):
+
+=== selector pipeline latency (Jetson) ===
+  split         : test
+  samples       : 100 (iters=100, warmup=10)
+  batch_size    : 1
+  avg_latency   : 55.675 ms / patch
+  std_latency   : 21.674 ms
+  frac_B1       : 48.00 %  (B1 を選択した割合)
+
+[done] total elapsed wall time = 33.1 sec
+

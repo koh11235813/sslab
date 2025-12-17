@@ -21,3 +21,5 @@ src/dataset/ColorMasks-RescueNet.zip
 src/dataset/RescueNet.zip
 src/dataset/RescueNet_patches.zip
 
+logs.txt
+result.txt

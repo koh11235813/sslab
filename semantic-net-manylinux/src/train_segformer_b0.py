@@ -11,6 +11,7 @@ from transformers import SegformerForSemanticSegmentation
 
 from dataset.rescuenet_patches import RescueNetPatches
 
+
 NUM_CLASSES = 11
 
 ID2LABEL = {

@@ -1,0 +1,33 @@
+yamakawa-kohsuke@yamakawakohsuke-jetson:~/development/github/sslab/semantic-net$ uv run --frozen src/measure_latency-IoU_selector.py --data_root src/dataset/RescueNet_patches/ --split test --ckpt_b0 ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt --ckpt_b1 ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt --selector_ckpt ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0010.pt --precomputed_csv ../semantic-net-manylinux/precomputed_values_rescuenet_b0_b1.csv 
+device        = cuda
+data_root     = src/dataset/RescueNet_patches
+split         = test
+ckpt_b0       = ../semantic-net-manylinux/checkpoints_segformer_b0/best_segformer_b0.pt
+ckpt_b1       = ../semantic-net-manylinux/checkpoints_segformer_b1/best_segformer_b1.pt
+selector_ckpt = ../semantic-net-manylinux/checkpoints_selector/selector_lambda_0.0010.pt
+iters         = 100
+warmup        = 10
+batch_size    = 1
+hidden_dim    = 64
+fp16          = False
+csv           = ../semantic-net-manylinux/precomputed_values_rescuenet_b0_b1.csv
+[build] SegFormer-B0 / B1
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency-IoU_selector.py:212: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  ckpt = torch.load(ckpt_path, map_location=device)
+[build] Selector MLP
+/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency-IoU_selector.py:346: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  sel_state = torch.load(selector_ckpt, map_location=device)
+[dataset] split=test, size=4600
+[amp] fp32 (no autocast) for selector pipeline
+[metrics] load precomputed metrics from: ../semantic-net-manylinux/precomputed_values_rescuenet_b0_b1.csv
+Traceback (most recent call last):
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency-IoU_selector.py", line 647, in <module>
+    main()
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency-IoU_selector.py", line 628, in main
+    measure_latency_selector(
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/yamakawa-kohsuke/development/github/sslab/semantic-net/src/measure_latency-IoU_selector.py", line 422, in measure_latency_selector
+    feats = extract_features_from_logits(
+TypeError: extract_features_from_logits() got an unexpected keyword argument 'device'
+
