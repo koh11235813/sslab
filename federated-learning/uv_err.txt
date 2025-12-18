@@ -1,0 +1,47 @@
+kohsuke-jetson:~/development/github/sslab/federated-learning$ uv sync
+Resolved 71 packages in 3ms
+Prepared 15 packages in 856ms
+Installed 37 packages in 457ms
+ + certifi==2025.11.12
+ + cffi==2.0.0
+ + charset-normalizer==3.4.4
+ + click==8.1.8
+ + cryptography==44.0.3
+ + filelock==3.20.1
+ + flwr==1.25.0
+ + fsspec==2025.12.0
+ + grpcio==1.76.0
+ + grpcio-health-checking==1.76.0
+ + hf-xet==1.2.0
+ + huggingface-hub==0.36.0
+ + idna==3.11
+ + iterators==0.0.2
+ + markdown-it-py==4.0.0
+ + mdurl==0.1.2
+ + numpy==1.26.4
+ + packaging==25.0
+ + pathspec==0.12.1
+ + protobuf==6.33.2
+ + pycparser==2.23
+ + pycryptodome==3.23.0
+ + pygments==2.19.2
+ + pyyaml==6.0.3
+ + regex==2025.11.3
+ + requests==2.32.5
+ + rich==13.9.4
+ + safetensors==0.7.0
+ + shellingham==1.5.4
+ + tokenizers==0.22.1
+ + tomli==2.3.0
+ + tomli-w==1.2.0
+ + tqdm==4.67.1
+ + transformers==4.57.3
+ + typer==0.20.0
+ + typing-extensions==4.15.0
+ + urllib3==2.6.2
+yamakawa-kohsuke@yamakawakohsuke-jetson:~/development/github/sslab/federated-learning$ uv sync --extra jetson
+Resolved 71 packages in 3ms
+error: Distribution `torch==2.5.0a0+872d972e41.nv24.8 @ direct+https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl` can't be installed because the binary distribution is incompatible with the current platform
+
+hint: You're using CPython 3.11 (`cp311`), but `torch` (v2.5.0a0+872d972e41.nv24.8) only has wheels with the following Python ABI tag: `cp310`
+
