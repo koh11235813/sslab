@@ -14,26 +14,26 @@ This package contains a minimal Flower runner plus dependency metadata shared by
    uv venv
    source .venv/bin/activate
    ```
-2. Install the base dependencies (CPU-only):
+2. Install the base dependencies:
    ```bash
-   uv pip install -e .
+   uv sync
    ```
-   The command reads `pyproject.toml` and resolves packages declared under `[project.dependencies]`. To reinstall exactly what is in `uv.lock`, run `uv pip sync` instead of `uv pip install`.
+   The command reads `pyproject.toml` and resolves packages declared under `[project.dependencies]`. To reinstall exactly what is in `uv.lock`, run `uv sync` instead of `uv pip install`.
 
 ## Accelerator-specific extras
 Only one accelerator extra can be installed at a time (conflicts are enforced under `[tool.uv]`). Pick the extra that matches your target hardware:
 
 - **Jetson (Linux aarch64)** – prebuilt wheels hosted by NVIDIA:
   ```bash
-  uv pip install -e .[jetson]
+  uv sync --extra jetson
   ```
 - **CUDA 12.4 on x86_64** – standard PyTorch wheels from the cu124 index:
   ```bash
-  uv pip install -e .[cu124]
+  uv sync --extra cu124
   ```
 - **ROCm 6.1 on x86_64** – ROCm-enabled wheels:
   ```bash
-  uv pip install -e .[rocm]
+  uv sync --extra rocm
   ```
 
 The `[tool.uv.sources]` stanza in `pyproject.toml` points uv at the correct PyTorch index URLs, so no manual `pip` flags are required. If you ever need to rebuild a lock file for a specific accelerator, supply the `--extra` flag, for example `uv lock --extra rocm`.
