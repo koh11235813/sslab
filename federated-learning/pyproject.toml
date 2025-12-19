@@ -19,32 +19,33 @@ dev = [
 jetson = [
     "torch @ https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64' and platform_machine != 'x86_64'",
     "torchvision @ https://kinoko1943.org/files/torchvision-0.20.0a0+afc54f7-cp310-cp310-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64' and platform_machine != 'x86_64'",
+    "tensorflow @ https://developer.download.nvidia.com/compute/redist/jp/v61/tensorflow/tensorflow-2.16.1+nv24.08-cp310-cp310-linux_aarch64.whl ; platform_system == 'Linux' and platform_machine == 'aarch64' and platform_machine != 'x86_64'" 
 ]
 cpu = [
-  "torch == 2.5.0",
-  "torchvision == 0.20",
+    "torch == 2.5.0",
+    "torchvision == 0.20",
+    "tensorflow >= 2.16, <2.17",
 ]
 cu124 = [
-  "torch==2.5.0",
-  "torchvision == 0.20",
+    "torch==2.5.0",
+    "torchvision == 0.20",
+    "tensorflow >= 2.16, <2.17",
 ]
 rocm = [
-  "pytorch-triton-rocm == 3.1.0; sys_platform == 'linux' and platform_machine == 'x86_64'",
-  "torch == 2.5.0+rocm6.1; sys_platform == 'linux' and platform_machine == 'x86_64'",
-  "torchvision == 0.20; sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "pytorch-triton-rocm @ https://repo.radeon.com/rocm/manylinux/rocm-rel-6.3/pytorch_triton_rocm-3.1.0%2Brocm6.3.0.ec5320655a-cp310-cp310-linux_x86_64.whl; sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "torch @ https://repo.radeon.com/rocm/manylinux/rocm-rel-6.3/torch-2.5.1%2Brocm6.3.0-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "torchvision @ https://repo.radeon.com/rocm/manylinux/rocm-rel-6.3/torchvision-0.20.0%2Brocm6.3.0-cp310-cp310-linux_x86_64.whl ; sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "tensorflow_rocm @ https://repo.radeon.com/rocm/manylinux/rocm-rel-6.3/tensorflow_rocm-2.16.2-cp310-cp310-manylinux_2_28_x86_64.whl ; sys_platform == 'linux' and platform_machine == 'x86_64'",
 ]
 
 [tool.uv]
 conflicts = [
-  [
-    { extra = "cu124" },
-    { extra = "jetson" },
-    { extra = "rocm" },
-  ],
-  [
-    { extra = "cpu" },
-    { extra = "jetson" },
-  ],
+    [
+        { extra = "cu124" },
+        { extra = "jetson" },
+        { extra = "rocm" },
+        { extra = "cpu" },
+    ],
 ]
 environments = [
     "sys_platform == 'windows'",
@@ -55,18 +56,21 @@ environments = [
 
 [tool.uv.sources]
 torch = [
-  { index = "pytorch-cpu", extra = "cpu", marker = "sys_platform == 'darwin' or sys_platform == 'windows'"},
-  { index = "pytorch-cu124", extra = "cu124", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
-  { index = "pytorch-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+    { index = "pytorch-cpu", extra = "cpu", marker = "sys_platform == 'darwin' or sys_platform == 'windows'"},
+    { index = "pytorch-cu124", extra = "cu124", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+#    { index = "pytorch-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
 ]
 torchvision = [
-  { index = "pytorch-cpu", extra = "cpu", marker = "sys_platform == 'darwin' or sys_platform == 'windows'"},
-  { index = "pytorch-cu124", extra = "cu124", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
-  { index = "pytorch-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+    { index = "pytorch-cpu", extra = "cpu", marker = "sys_platform == 'darwin' or sys_platform == 'windows'"},
+    { index = "pytorch-cu124", extra = "cu124", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+#    { index = "pytorch-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
 ]
-pytorch-triton-rocm = [
-  { index = "pytorch-triton-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
-]
+# tensorflow = [
+#     { index = "tensorflow-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+# ]
+# pytorch-triton-rocm = [
+#     { index = "pytorch-triton-rocm", extra = "rocm", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'"},
+# ]
 
 [[tool.uv.index]]
 name = "pytorch-cpu"
@@ -78,15 +82,20 @@ name = "pytorch-cu124"
 url = "https://download.pytorch.org/whl/cu124"
 explicit = true
 
-[[tool.uv.index]]
-name = "pytorch-rocm"
-url = "https://download.pytorch.org/whl/rocm6.1"
-explicit = true
-
-[[tool.uv.index]]
-name = "pytorch-triton-rocm"
-url = "https://download.pytorch.org/whl/"
-explicit = true
+# [[tool.uv.index]]
+# name = "pytorch-rocm"
+# url = "https://repo.radeon.com/rocm/manylinux/rocm-rel-6.3/"
+# explicit = true
+# 
+# [[tool.uv.index]]
+# name = "tensorflow-rocm"
+# url = "https://repo.radeon.com/rocm/manylinux/rocm-rel-6.3/"
+# explicit = true
+# 
+# [[tool.uv.index]]
+# name = "pytorch-triton-rocm"
+# url = "https://download.pytorch.org/whl/rocm6.3/"
+# explicit = true
 
 [tool.setuptools]
 package-dir = {"" = "src"}
