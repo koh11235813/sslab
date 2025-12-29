@@ -73,13 +73,6 @@ NUM_CLASSES = 11
 def build_segformer(
     variant: str, device: torch.device
 ) -> SegformerForSemanticSegmentation:
-    """
-    variant: 'b0' or 'b1'
-
-    ここでは HuggingFace の「重み」は一切使わない。
-    SegformerConfig だけを取得して、アーキテクチャを組み立てる。
-    （重みは後で fine-tuned ckpt からロードする）
-    """
     if variant not in ("b0", "b1"):
         raise ValueError(f"unknown variant: {variant}")
 
@@ -100,8 +93,6 @@ def build_segformer(
     }
     label2id = {v: k for k, v in id2label.items()}
 
-    # ★ 重要: from_pretrained(…) で .bin を読ませない。
-    #   -> Config だけ取得して num_labels/id2label/label2id を上書き
     cfg = SegformerConfig.from_pretrained(
         hf_name,
         num_labels=NUM_CLASSES,
@@ -116,14 +107,6 @@ def build_segformer(
 
 def load_segformer_checkpoint(model: nn.Module, ckpt_path: Path, device: torch.device):
     ckpt = torch.load(ckpt_path, map_location=device)
-    # 学習スクリプト側の保存形式に合わせる
-    # torch.save({
-    #   'epoch': ...,
-    #   'model_state_dict': model.state_dict(),
-    #   'optimizer_state_dict': ...,
-    #   'best_miou': ...,
-    #   'args': ...,
-    # }, path)
     if isinstance(ckpt, dict):
         if "model_state_dict" in ckpt:
             state_dict = ckpt["model_state_dict"]
@@ -143,13 +126,12 @@ def load_segformer_checkpoint(model: nn.Module, ckpt_path: Path, device: torch.d
 
 
 # ============================================================
-# Selector MLP (学習と同じ構造にすること)
+# Selector MLP
 # ============================================================
 class SelectorMLP(nn.Module):
     def __init__(self, in_dim: int, hidden_dim: int = 64):
         super().__init__()
-        # ★ 学習時と同じ 2 層 MLP:
-        #   Linear(in_dim, hidden_dim) -> ReLU -> Linear(hidden_dim, 2)
+        Linear(in_dim, hidden_dim) -> ReLU -> Linear(hidden_dim, 2)
         self.net = nn.Sequential(
             nn.Linear(in_dim, hidden_dim),
             nn.ReLU(inplace=True),
@@ -163,8 +145,6 @@ class SelectorMLP(nn.Module):
 # ============================================================
 # B0 ロジットから特徴量を作る
 # ============================================================
-
-
 def extract_features_from_logits(
     logits: torch.Tensor, num_classes: int = NUM_CLASSES
 ) -> torch.Tensor:
@@ -197,8 +177,6 @@ def extract_features_from_logits(
 # ============================================================
 # レイテンシ計測ループ
 # ============================================================
-
-
 def measure_latency_selector(
     data_root: Path,
     split: str,
@@ -317,8 +295,6 @@ def measure_latency_selector(
 # ============================================================
 # CLI
 # ============================================================
-
-
 def parse_args():
     p = argparse.ArgumentParser()
     p.add_argument(
