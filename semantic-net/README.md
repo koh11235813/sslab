@@ -20,7 +20,7 @@ For a Japanese translation of this guide, see [README-jp.md](README-jp.md).
 1. **Sync dependencies**
 
    ```bash
-   uv sync
+   uv sync --frozen
    ```
 
    This resolves the environment described in `pyproject.toml` into `.venv/`.
@@ -28,7 +28,7 @@ For a Japanese translation of this guide, see [README-jp.md](README-jp.md).
    For Jetson or other NVIDIA L4T systems, include the Jetson-specific wheels packaged with this repository:
 
    ```bash
-   uv sync --extra jetson
+   uv sync --frozen --extra jetson
    ```
 
 2. **Use the environment**
@@ -36,7 +36,7 @@ For a Japanese translation of this guide, see [README-jp.md](README-jp.md).
    - Run scripts without manual activation:
 
      ```bash
-     uv run python src/run_single.py --task disaster --epochs 1
+     uv run --frozen python src/run_single.py --task disaster --epochs 1
      ```
 
    - Or activate the environment once per shell:
@@ -52,7 +52,7 @@ For a Japanese translation of this guide, see [README-jp.md](README-jp.md).
    uv remove <package>
    ```
 
-   Re-run `uv sync` when the dependency list changes.
+   Re-run `uv lock` followed by `uv sync --frozen` when the dependency list changes.
 
 ## Docker Image (JetPack)
 
@@ -107,19 +107,27 @@ The repository also ships with a convenience `docker-compose.yml` that wraps the
 Run a quick smoke test of the segmentation task:
 
 ```bash
-uv run python src/run_single.py --task disaster --epochs 1
+uv run --frozen python src/run_single.py --task disaster --epochs 1
 ```
 
 Switch to the QoS forecasting task and override batch size and learning rate:
 
 ```bash
-uv run python src/run_single.py --task netqos --epochs 3 --batch_size 32 --lr 5e-4
+uv run --frozen python src/run_single.py --task netqos --epochs 3 --batch_size 32 --lr 5e-4
 ```
 
 Persist trained weights after the loop finishes by adding the save flag (use `.pt` or `.pth`):
 
 ```bash
-uv run python src/run_single.py --task disaster --epochs 1 --save-model --output-path checkpoints/disaster.pth
+uv run --frozen python src/run_single.py --task disaster --epochs 1 --save-model --output-path checkpoints/disaster.pth
+```
+
+### RescueNet patches dataset
+
+Segmentation utilities that accept `--data_root` expect the directory that directly contains the `train/`, `val/`, and `test/` splits. From this project root, place the dataset at `dataset/RescueNet_patches` and pass it explicitly:
+
+```bash
+uv run --frozen python src/measure_latency_jetson.py --data_root dataset/RescueNet_patches --split test --model b2 --checkpoint checkpoints_segformer_b2/best_segformer_b2.pt
 ```
 
 ### Federated simulations
@@ -127,13 +135,13 @@ uv run python src/run_single.py --task disaster --epochs 1 --save-model --output
 1. Start the server (terminal 1):
 
    ```bash
-   uv run python src/run_fed_server.py --port 8080 --rounds 3
+   uv run --frozen python src/run_fed_server.py --port 8080 --rounds 3
    ```
 
 2. Launch a client (terminal 2):
 
    ```bash
-   uv run python src/run_fed_client.py \
+   uv run --frozen python src/run_fed_client.py \
        --config configs/task_disaster.yaml \
        --server localhost:8080
    ```
@@ -145,7 +153,7 @@ uv run python src/run_single.py --task disaster --epochs 1 --save-model --output
 Use the new peer runner when you want Jetson devices to collaborate without a central server. Each device listens on its configured `p2p.local_port`, trains locally, and exchanges model updates over UDP with its peers listed on the command line. Make sure every node lists the other participants (but not itself) and that firewalls permit the chosen port.
 
 ```bash
-python run_peer_training.py --config configs/task_disaster.yaml --peers 192.168.0.2:5000,192.168.0.3:5000
+uv run --frozen python run_peer_training.py --config configs/task_disaster.yaml --peers 192.168.0.2:5000,192.168.0.3:5000
 ```
 
 Adjust defaults such as `p2p.local_port` or `p2p.listen_timeout` in `configs/base.yaml`, or override them per-node with `--port` and `--rounds`.

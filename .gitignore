@@ -20,3 +20,4 @@ build/
 checkpoints
 tree.txt
 milestone.md
+.mcp.json

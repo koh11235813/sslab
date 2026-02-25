@@ -98,7 +98,7 @@ def evaluate(model, loader, device):
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--data_root", type=str, default="src/dataset/RescueNet_patches")
+    p.add_argument("--data_root", type=str, default="dataset/RescueNet_patches")
     p.add_argument(
         "--split", type=str, default="test", choices=["train", "val", "test"]
     )

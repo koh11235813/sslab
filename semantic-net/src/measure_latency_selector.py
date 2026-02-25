@@ -301,7 +301,7 @@ def parse_args():
         "--data_root",
         type=str,
         required=True,
-        help="RescueNet_patches の root ディレクトリ (例: src/dataset/RescueNet_patches)",
+        help="RescueNet_patches の root ディレクトリ (例: dataset/RescueNet_patches)",
     )
     p.add_argument(
         "--split",

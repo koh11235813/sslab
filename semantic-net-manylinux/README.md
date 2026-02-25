@@ -22,27 +22,27 @@ Federated semantic communication experiments that combine lightweight semantic e
 2. Sync dependencies with the desired backend (default is CPU). Extras match the `pyproject.toml` specifications:
    ```sh
    # CPU backend
-   uv sync --extra cpu
+   uv sync --frozen --extra cpu
 
    # CUDA 12.4 backend (requires matching NVIDIA drivers)
-   uv sync --extra cu124
+   uv sync --frozen --extra cu124
 
    # ROCm 6.1 backend (Linux/x86_64)
-   uv sync --extra rocm
+   uv sync --frozen --extra rocm
    ```
 3. Confirm the environment is functional:
    ```sh
-   uv run python scripts/smoke.py
-   # or: uv run python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+   uv run --frozen python scripts/smoke.py
+   # or: uv run --frozen python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
    ```
 
 ## Quick Start
 ### Single-Device Training
 Both bundled tasks operate on synthetic data so they run anywhere. Override batch size, learning rate, device, and checkpoint paths via flags:
 ```sh
-python src/run_single.py --task disaster --epochs 1
-python src/run_single.py --task netqos --epochs 5 --batch_size 32 --lr 5e-4 --device cpu
-python src/run_single.py --task disaster --epochs 3 --save-model --output-path checkpoints/disaster_demo.pth
+uv run --frozen python src/run_single.py --task disaster --epochs 1
+uv run --frozen python src/run_single.py --task netqos --epochs 5 --batch_size 32 --lr 5e-4 --device cpu
+uv run --frozen python src/run_single.py --task disaster --epochs 3 --save-model --output-path checkpoints/disaster_demo.pth
 ```
 For single-device smoke tests, setting `semantic.mode` to `gradients_topk` sparsifies gradients before the optimizer step. The federated client also honors `semantic.mode=weights_quantize` to return quantized model updates.
 
@@ -50,12 +50,21 @@ For single-device smoke tests, setting `semantic.mode` to `gradients_topk` spars
 Use Flower to simulate a server and client on your workstation:
 ```sh
 # Terminal 1
-python src/run_fed_server.py --port 8080 --rounds 3
+uv run --frozen python src/run_fed_server.py --port 8080 --rounds 3
 
 # Terminal 2
-python src/run_fed_client.py --config configs/task_disaster.yaml --server localhost:8080
+uv run --frozen python src/run_fed_client.py --config configs/task_disaster.yaml --server localhost:8080
 ```
 The client loads task components via `task.load_task`, trains for the configured `training.local_epochs`, optionally applies semantic compression, and then reports validation loss. Multiple clients can attach to the same server with different configs.
+
+### SegFormer training (RescueNet patches)
+The SegFormer scripts expect `--data_root` to point at the `RescueNet_patches` directory that contains `train/`, `val/`, and `test/` splits. From this project root, keep the dataset at `dataset/RescueNet_patches`:
+
+```sh
+uv run --frozen src/train_segformer_b3.py --data_root dataset/RescueNet_patches --epoch 50 --batch_size 8
+```
+
+(`--epoch` is accepted as an alias for `--epochs`.)
 
 ### Docker Compose
 Containerized workflows set up the same runners under `/opt/semantic`:

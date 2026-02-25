@@ -222,11 +222,11 @@ def parse_args():
     parser.add_argument(
         "--data_root",
         type=str,
-        default="/home/kinoko/development/github/sslab/dataset/RescueNet_patches",
+        default="dataset/RescueNet_patches",
     )
     parser.add_argument("--out_dir", type=str, default="./checkpoints_segformer_b0")
     parser.add_argument("--batch_size", type=int, default=8)
-    parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--epochs", "--epoch", type=int, default=50, dest="epochs")
     parser.add_argument("--lr", type=float, default=1e-4)
     parser.add_argument("--num_workers", type=int, default=4)
     parser.add_argument("--print_iou_every", type=int, default=5)

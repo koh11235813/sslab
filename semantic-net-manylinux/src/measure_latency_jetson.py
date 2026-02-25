@@ -117,7 +117,7 @@ def measure_latency(model, images: torch.Tensor, warmup: int, iters: int):
 
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--data_root", type=str, default="src/dataset/RescueNet_patches")
+    p.add_argument("--data_root", type=str, default="dataset/RescueNet_patches")
     p.add_argument("--split", type=str, default="test")
     p.add_argument("--model", type=str, required=True, choices=["b0", "b1", "b2"])
     p.add_argument("--checkpoint", type=str, required=True)
